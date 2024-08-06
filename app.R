@@ -1,8 +1,10 @@
 library(shiny)
 
+source('./test_function.R')
+
 ui <- fluidPage(
-  fileInput("upload", NULL, accept = c(".csv")),
-  numericInput("n", "Rows", value = 5, min = 1, step = 1),
+  #fileInput("upload", NULL, accept = c(".csv")),
+  #numericInput("n", "Rows", value = 5, min = 1, step = 1),
   tableOutput("head")
   
 )
@@ -10,11 +12,12 @@ ui <- fluidPage(
 server <- function(input, output, session){
   
   data <- reactive({
-    req(input$upload)
-    csv = vroom::vroom(input$upload$datapath, delim = ",")
+    #req(input$upload)
+    #csv = vroom::vroom(input$upload$datapath, delim = ",")
+    test_function()
   })
   output$head <- renderTable({
-  head(data(), input$n)
+  head(data())
   })
   
 }
