@@ -1,23 +1,55 @@
 library(shiny)
+library(DT)
+library(ggplot2)
 
-source('./test_function.R')
+source('./functions/boxplot_wrapper.R')
+source('./functions/format_data.R')
+source('./functions/load_background_data.R')
+source('./functions/load_foreground_data.R')
+source('./functions/make_boxplot.R')
 
 ui <- fluidPage(
-  #fileInput("upload", NULL, accept = c(".csv")),
-  #numericInput("n", "Rows", value = 5, min = 1, step = 1),
-  tableOutput("head")
-  
+  titlePanel("CATalog"),
+  sidebarLayout(
+    sidebarPanel(),
+    mainPanel(
+      fluidRow(
+        column(6, DT::dataTableOutput("display")),
+        #column(6, verbatimTextOutput("debug"))
+        column(6, plotOutput("boxplot", height = 500))
+      )
+    )
+  )
 )
 
 server <- function(input, output, session){
   
   data <- reactive({
-    #req(input$upload)
-    #csv = vroom::vroom(input$upload$datapath, delim = ",")
-    test_function()
+    load_foreground_data()
   })
-  output$head <- renderTable({
-  head(data())
+  
+  #background <- reactive({
+    #load_background_data()
+  #})
+  
+  background <- load_background_data()
+  
+  output$display <- DT::renderDataTable(selection = 'single',{
+    data()
+  })
+  #output$debug <- renderPrint({
+    #s = input$display_rows_selected
+    #if(length(s)){
+      #row <- data()[s,]
+      #p <- row[,2]
+      #print(p)
+    #}
+  #})
+  
+  output$boxplot <- renderPlot({
+    s = input$display_rows_selected
+    plot <- boxplot_wrapper(data = background, i = s)
+    plot
   })
   
 }
