@@ -1,6 +1,7 @@
 library(shiny)
 library(DT)
 library(ggplot2)
+library(shinydashboard)
 
 source('./functions/boxplot_wrapper.R')
 source('./functions/format_data.R')
@@ -8,17 +9,14 @@ source('./functions/load_background_data.R')
 source('./functions/load_foreground_data.R')
 source('./functions/make_boxplot.R')
 
-ui <- fluidPage(
-  titlePanel("CATalog"),
-  sidebarLayout(
-    sidebarPanel(),
-    mainPanel(
-      fluidRow(
-        column(6, DT::dataTableOutput("display")),
-        #column(6, verbatimTextOutput("debug"))
-        column(6, plotOutput("boxplot", height = 500))
-      )
-    )
+ui <- dashboardPage(
+    dashboardHeader(title = "CATalog"),
+    dashboardSidebar(),
+      dashboardBody(
+        fluidRow(
+          box(6, DT::dataTableOutput("display")),
+          box(6, plotOutput("boxplot", height = 500))
+        )
   )
 )
 
@@ -28,23 +26,11 @@ server <- function(input, output, session){
     load_foreground_data()
   })
   
-  #background <- reactive({
-    #load_background_data()
-  #})
-  
   background <- load_background_data()
   
-  output$display <- DT::renderDataTable(selection = 'single',{
-    data()
+  output$display <- DT::renderDataTable({
+    datatable(data(), selection = 'single', options = list(scrollX = T))
   })
-  #output$debug <- renderPrint({
-    #s = input$display_rows_selected
-    #if(length(s)){
-      #row <- data()[s,]
-      #p <- row[,2]
-      #print(p)
-    #}
-  #})
   
   output$boxplot <- renderPlot({
     s = input$display_rows_selected
