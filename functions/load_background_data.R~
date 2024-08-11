@@ -1,4 +1,0 @@
-load_foreground_data <- function(){
-	data <- read.csv("background.csv")
-	data
-}
