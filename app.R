@@ -21,7 +21,8 @@ ui <- dashboardPage(
     ),
       dashboardBody(
         fluidRow(
-          box(DT::dataTableOutput("display")),
+          box(DT::dataTableOutput("display"), 
+              style = "height:500px; overflow-y: scroll; overflow-x: scroll;"),
           box(plotOutput("boxplot", height = 500))
         )
   )
@@ -48,7 +49,7 @@ server <- function(input, output, session){
   #})
   
   output$display <- DT::renderDataTable({
-    datatable(main$data, selection = 'single', options = list(scrollX = T))
+    datatable(main$data, selection = 'single')
   })
   
   output$boxplot <- renderPlot({
