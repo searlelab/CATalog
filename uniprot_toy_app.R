@@ -33,6 +33,7 @@ server <- function(input, output, session){
 
 	output$results <- DT::renderDataTable({
 		index <- input$display_rows_selected
+		req(index)
 		entry <- get_entry_mapping(data, index)
 		res <- query(up, entry, fields)
 		res_formatted <- transform_data(res)

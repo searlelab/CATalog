@@ -2,6 +2,8 @@ setwd("C:\\Users\\alexw\\Documents\\R Shiny Projects\\CATalog")
 
 library(UniProt.ws)
 
+source('./functions/transform_data.R')
+
 test <- "A0A5F5XCT0_FELCA" #first UniProtKB acession number in the table
 
 foo <- queryUniProt(test)
