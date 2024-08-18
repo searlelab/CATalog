@@ -4,6 +4,7 @@ library(ggplot2)
 library(shinydashboard)
 library(tidyverse)
 library(UniProt.ws)
+library(recolorize)
 
 source('./functions/boxplot_wrapper.R')
 source('./functions/check_highest_biofluid.R')
@@ -27,15 +28,19 @@ choices_2 <- c("none", "urine", "serum", "plasma")
 fields <- c("accession", "gene_names", "protein_name", "protein_existence", "annotation_score", "go", "go_id", "organelle")
 up <- UniProt.ws(9685)
 
+img <- readImage('logo.png')
+
 ui <- dashboardPage(
     dashboardHeader(title = "CATalog"),
     dashboardSidebar(
+      
       radioButtons("status", "Review Status:",
                    c("unreviewed", "reviewed", "all"),
                    selected = "all"),
       selectInput("c1", "Filter by highest biofluid", choices_1),
       selectInput("c2", "Filter by second highest biofluid", choices_2),
-      actionButton("execute", "Apply Filters", icon = icon("cat"))
+      actionButton("execute", "Apply Filters", icon = icon("cat")),
+      imageOutput("catalog_logo")
       
       
     ),
@@ -99,6 +104,15 @@ server <- function(input, output, session){
       }
     }
   })
+  
+  output$catalog_logo <- renderImage({
+    list(
+      src = file.path("logo.png"),
+      contentType = "image/png",
+      width = 150,
+      height = 150
+    )
+  }, deleteFile = FALSE)
   
   output$results <- DT::renderDataTable({
     index <- input$display_rows_selected
