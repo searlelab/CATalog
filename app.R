@@ -3,6 +3,7 @@ library(DT)
 library(ggplot2)
 library(shinydashboard)
 library(tidyverse)
+library(UniProt.ws)
 
 source('./functions/boxplot_wrapper.R')
 source('./functions/check_highest_biofluid.R')
@@ -13,12 +14,18 @@ source('./functions/filter_secondary_biofluid.R')
 source('./functions/find_column_index.R')
 source('./functions/find_protein_status.R')
 source('./functions/format_data.R')
+source('./functions/get_entry_mapping.R')
 source('./functions/load_background_data.R')
 source('./functions/load_foreground_data.R')
 source('./functions/make_boxplot.R')
+source('./functions/query.R')
+source('./functions/transform_data.R')
 
 choices_1 <- c("all", "urine", "serum", "plasma")
 choices_2 <- c("none", "urine", "serum", "plasma")
+
+fields <- c("accession", "gene_names", "protein_name", "protein_existence", "annotation_score", "go", "go_id", "organelle")
+up <- UniProt.ws(9685)
 
 ui <- dashboardPage(
     dashboardHeader(title = "CATalog"),
@@ -33,6 +40,10 @@ ui <- dashboardPage(
       
     ),
       dashboardBody(
+        fluidRow(
+          box(DT::dataTableOutput("results"),
+              style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
+        ),
         fluidRow(
           box(DT::dataTableOutput("display"), 
               style = "height:500px; overflow-y: scroll; overflow-x: scroll;"),
@@ -61,11 +72,6 @@ server <- function(input, output, session){
     main$data <- filter_foreground(main$data, main$proteins)
   })
   
-  #data <- reactive(input$status,{
-    #filter_foreground(foreground, main$proteins)
-  #})
-  
-  
   observeEvent(input$c1,{
     main$first_choice <- input$c1
   })
@@ -73,7 +79,6 @@ server <- function(input, output, session){
   observeEvent(input$c2, {
     main$second_choice <- input$c2
   })
-  
   
   observeEvent(input$execute,{
     #if 'all' is selected, we reset the data table
@@ -95,6 +100,14 @@ server <- function(input, output, session){
     }
   })
   
+  output$results <- DT::renderDataTable({
+    index <- input$display_rows_selected
+    req(index)
+    entry <- get_entry_mapping(data, index)
+    res <- query(up, entry, fields)
+    res_formatted <- transform_data(res)
+    datatable(res_formatted)
+  })
   
   output$display <- DT::renderDataTable({
     datatable(main$data, selection = 'single')
