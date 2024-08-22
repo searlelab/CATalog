@@ -47,6 +47,8 @@ ui <- dashboardPage(
       dashboardBody(
         fluidRow(
           box(DT::dataTableOutput("results"),
+              style = "height: 200px; overflow-y: scroll; overflow-x: scroll;"),
+          box(DT::dataTableOutput("demo"),
               style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
         ),
         fluidRow(
@@ -62,6 +64,8 @@ server <- function(input, output, session){
   
   background <- load_background_data()
   
+  demographics <- read.csv("demographics.csv")
+  
   main <- reactiveValues()
   
   foreground <- reactive({
@@ -70,6 +74,7 @@ server <- function(input, output, session){
   
   observeEvent(foreground(),{
     main$data <- foreground()
+    print(class(main$data))
   })
   
   observeEvent(input$status,{
@@ -116,11 +121,19 @@ server <- function(input, output, session){
   
   output$results <- DT::renderDataTable({
     index <- input$display_rows_selected
+    print("alpha")
     req(index)
-    entry <- get_entry_mapping(data, index)
+    entry <- get_entry_mapping(main$data, index)
+    print("beta")
     res <- query(up, entry, fields)
+    print("gamma")
     res_formatted <- transform_data(res)
+    print("delta")
     datatable(res_formatted)
+  })
+  
+  output$demo <- DT::renderDataTable({
+    demographics
   })
   
   output$display <- DT::renderDataTable({
