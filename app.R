@@ -34,6 +34,7 @@ ui <- dashboardPage(
     dashboardHeader(title = "CATalog"),
     dashboardSidebar(
       
+      #this is going to be repurposed
       radioButtons("status", "Review Status:",
                    c("unreviewed", "reviewed", "all"),
                    selected = "all"),
@@ -74,7 +75,6 @@ server <- function(input, output, session){
   
   observeEvent(foreground(),{
     main$data <- foreground()
-    print(class(main$data))
   })
   
   observeEvent(input$status,{
@@ -119,16 +119,12 @@ server <- function(input, output, session){
     )
   }, deleteFile = FALSE)
   
+  #this is going to be reformatted
   output$results <- DT::renderDataTable({
     index <- input$display_rows_selected
-    print("alpha")
-    req(index)
     entry <- get_entry_mapping(main$data, index)
-    print("beta")
     res <- query(up, entry, fields)
-    print("gamma")
     res_formatted <- transform_data(res)
-    print("delta")
     datatable(res_formatted)
   })
   
