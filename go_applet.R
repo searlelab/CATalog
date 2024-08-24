@@ -6,9 +6,12 @@ library(tidyverse)
 GO_data <- read.csv("go_data.csv")
 
 source("./functions/cell_parser_wrapper.R")
+source("./functions/create_pattern.R")
 source("./functions/fetch_go_info.R")
+source("./functions/go_column_mapper.R")
 source("./functions/load_foreground_data.R")
 source("./functions/parse_cell.R")
+source("./functions/search_go_data.R")
 
 
 
@@ -20,7 +23,10 @@ ui <- dashboardPage(
 						  c("biological process",
 						    "cellular compartment",
 						    "molecular function"),
-				     selected = "biological process")
+				     		  selected = "biological process"),
+		    		     textInput("keyword", "Filter proteins by GO: ", value = ""),
+				     actionButton("searchButton", "Search"),
+				     actionButton("reset", "Reset table")
 				     ),
 		    dashboardBody(
 				  fluidRow(
@@ -66,18 +72,18 @@ server <- function(input, output, session){
 		main$go_element <- fetch_go_info(go_list, field = input$go_item)
 	})
 
-	#now to wire the radio buttons
-	#triggers when the user changes a radio button
-	#also triggers on app loading with default of biological process
-	#observeEvent(input$go_item,{
-		#req(input$display_rows_selected)
-	  #print("witty comment")
-		#main$go_element_specific <- fetch_go_info(main$go_list_specific,
-							  #field = input$go_item)
-		#print(nrow(main$go_element_specific))
-	#})
+	#logic for the search event
+	observeEvent(input$searchButton,{
+	          index <- go_column_mapper(input$go_item)
+			     res <- search_go_data(GO_data, main$data, index, word = input$keyword)
+			     main$data <- res
+	})
 	
-	#it appears that we need to have a default
+	#A reset button until I implement a better solution
+	observeEvent(input$reset,{
+	  main$data <- foreground()
+	})
+
 
 	#nothing to change for the main display
 	output$display <- DT::renderDataTable({

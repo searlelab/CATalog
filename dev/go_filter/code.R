@@ -68,4 +68,28 @@ fetch_go_info <- function(go_list, field){
 }
 
 
+#now for the complicated part. Let's load the foreground data.
+foreground <- read.csv("foreground.csv")
+
+#for a given term, we need to return a list of proteins that contain that term. We will operate in a similar manner
+test <- data%>%
+	filter(str_detect(data[,6], "\\bmitochondria\\b"))
+
+#the above works, now we need to make it more generic
+create_pattern <- function(word){
+	pattern <- paste0("\\b", word, "\\b")
+	pattern
+}
+
+#now we're getting somewhere
+search_go_data <- function(data, foreground, index, word){
+	pattern <- create_pattern(word)
+	df <- data%>%
+		filter(str_detect(data[,index], pattern))
+	entries <- df$Column2
+	res <- foreground%>%
+		filter(Entry %in% entries)
+	res
+}
+
 
