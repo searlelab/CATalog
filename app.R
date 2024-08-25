@@ -6,29 +6,16 @@ library(tidyverse)
 
 source('./functions/boxplot_wrapper.R')
 source('./functions/cell_parser_wrapper.R')
-#source('./functions/check_highest_biofluid.R')
-#source('./functions/check_secondary_biofluid.R')
 source('./functions/create_pattern.R')
 source('./functions/fetch_go_info.R')
-#source('./functions/filter_foreground.R')
-#source('./functions/filter_highest_biofluid.R')
-#source('./functions/filter_secondary_biofluid.R')
-#source('./functions/find_column_index.R')
-#source('./functions/find_protein_status.R')
-#source('./functions/format_data.R')
 source('./functions/go_column_mapper.R')
-#source('./functions/get_entry_mapping.R')
 source('./functions/load_background_data.R')
 source('./functions/load_foreground_data.R')
 source('./functions/make_boxplot.R')
 source('./functions/parse_cell.R')
-#source('./functions/query.R')
 source('./functions/search_go_data.R')
-#source('./functions/transform_data.R')
 
 GO_data <- read.csv("go_data.csv")
-
-#img <- readImage('logo.png')
 
 ui <- dashboardPage(
     dashboardHeader(title = "CATalog"),
@@ -107,13 +94,7 @@ server <- function(input, output, session){
     )
   }, deleteFile = FALSE)
   
-  #this is going to be reformatted
   output$results <- DT::renderDataTable({
-    #index <- input$display_rows_selected
-    #entry <- get_entry_mapping(main$data, index)
-    #res <- query(up, entry, fields)
-    #res_formatted <- transform_data(res)
-    #datatable(res_formatted)
     main$go_element
   })
   
