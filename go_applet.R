@@ -68,7 +68,7 @@ server <- function(input, output, session){
 		id <- input$display_rows_selected
 		go_list <- cell_parser_wrapper(id, GO_data)
 		#we can set the specific ontologies for that protein to our reactive container
-		print("remade go list")
+		#print("remade go list")
 		main$go_element <- fetch_go_info(go_list, field = input$go_item)
 	})
 

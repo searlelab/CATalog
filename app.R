@@ -3,47 +3,48 @@ library(DT)
 library(ggplot2)
 library(shinydashboard)
 library(tidyverse)
-library(UniProt.ws)
-library(recolorize)
 
 source('./functions/boxplot_wrapper.R')
-source('./functions/check_highest_biofluid.R')
-source('./functions/check_secondary_biofluid.R')
-source('./functions/filter_foreground.R')
-source('./functions/filter_highest_biofluid.R')
-source('./functions/filter_secondary_biofluid.R')
-source('./functions/find_column_index.R')
-source('./functions/find_protein_status.R')
-source('./functions/format_data.R')
-source('./functions/get_entry_mapping.R')
+source('./functions/cell_parser_wrapper.R')
+#source('./functions/check_highest_biofluid.R')
+#source('./functions/check_secondary_biofluid.R')
+source('./functions/create_pattern.R')
+source('./functions/fetch_go_info.R')
+#source('./functions/filter_foreground.R')
+#source('./functions/filter_highest_biofluid.R')
+#source('./functions/filter_secondary_biofluid.R')
+#source('./functions/find_column_index.R')
+#source('./functions/find_protein_status.R')
+#source('./functions/format_data.R')
+source('./functions/go_column_mapper.R')
+#source('./functions/get_entry_mapping.R')
 source('./functions/load_background_data.R')
 source('./functions/load_foreground_data.R')
 source('./functions/make_boxplot.R')
-source('./functions/query.R')
-source('./functions/transform_data.R')
+source('./functions/parse_cell.R')
+#source('./functions/query.R')
+source('./functions/search_go_data.R')
+#source('./functions/transform_data.R')
 
-choices_1 <- c("all", "urine", "serum", "plasma")
-choices_2 <- c("none", "urine", "serum", "plasma")
+GO_data <- read.csv("go_data.csv")
 
-fields <- c("accession", "gene_names", "protein_name", "protein_existence", "annotation_score", "go", "go_id", "organelle")
-up <- UniProt.ws(9685)
-
-img <- readImage('logo.png')
+#img <- readImage('logo.png')
 
 ui <- dashboardPage(
     dashboardHeader(title = "CATalog"),
     dashboardSidebar(
       
-      #this is going to be repurposed
-      radioButtons("status", "Review Status:",
-                   c("unreviewed", "reviewed", "all"),
-                   selected = "all"),
-      selectInput("c1", "Filter by highest biofluid", choices_1),
-      selectInput("c2", "Filter by second highest biofluid", choices_2),
-      actionButton("execute", "Apply Filters", icon = icon("cat")),
-      imageOutput("catalog_logo")
-      
-      
+        radioButtons("go_item", "GO Data: ",
+                     c("biological process",
+                       "cellular compartment",
+                       "molecular function"),
+                     selected = "biological process"),
+        
+        
+        textInput("keyword", "Filter proteins by GO: ", value = ""),
+        actionButton("searchButton", "Search"),
+        actionButton("reset", "Reset table"),
+        imageOutput("catalog_logo")
     ),
       dashboardBody(
         fluidRow(
@@ -57,8 +58,9 @@ ui <- dashboardPage(
               style = "height:500px; overflow-y: scroll; overflow-x: scroll;"),
           box(plotOutput("boxplot", height = 500))
         )
-  )
+    )
 )
+
 
 server <- function(input, output, session){
   
@@ -77,37 +79,23 @@ server <- function(input, output, session){
     main$data <- foreground()
   })
   
-  observeEvent(input$status,{
-    main$proteins <- find_protein_status(background, option = input$status)
-    main$data <- filter_foreground(main$data, main$proteins)
+  #new observer logic
+  observeEvent(input$display_rows_selected,{
+    id <- input$display_rows_selected
+    go_list <- cell_parser_wrapper(id, GO_data)
+    #we can set the specific ontologies for that protein to our reactive container
+    #print("remade go list")
+    main$go_element <- fetch_go_info(go_list, field = input$go_item)
   })
   
-  observeEvent(input$c1,{
-    main$first_choice <- input$c1
+  observeEvent(input$searchButton,{
+    index <- go_column_mapper(input$go_item)
+    res <- search_go_data(GO_data, main$data, index, word = input$keyword)
+    main$data <- res
   })
   
-  observeEvent(input$c2, {
-    main$second_choice <- input$c2
-  })
-  
-  observeEvent(input$execute,{
-    #if 'all' is selected, we reset the data table
-    if(main$first_choice == "all"){
-      main$data <- foreground()
-      print(nrow(main$data))
-    }
-    #if 'all' is not selected, we do a thing
-    else if(main$first_choice != "all"){
-      #get the index
-      i <- find_column_index(main$first_choice)
-      #filter the table
-      main$data <- filter_highest_biofluid(foreground(), i)
-      #filter again if we have a second choice
-      if(main$second_choice != "none"){
-        j <- find_column_index(main$second_choice)
-        main$data <- filter_secondary_biofluid(main$data, j)
-      }
-    }
+  observeEvent(input$reset,{
+    main$data <- foreground()
   })
   
   output$catalog_logo <- renderImage({
@@ -121,11 +109,12 @@ server <- function(input, output, session){
   
   #this is going to be reformatted
   output$results <- DT::renderDataTable({
-    index <- input$display_rows_selected
-    entry <- get_entry_mapping(main$data, index)
-    res <- query(up, entry, fields)
-    res_formatted <- transform_data(res)
-    datatable(res_formatted)
+    #index <- input$display_rows_selected
+    #entry <- get_entry_mapping(main$data, index)
+    #res <- query(up, entry, fields)
+    #res_formatted <- transform_data(res)
+    #datatable(res_formatted)
+    main$go_element
   })
   
   output$demo <- DT::renderDataTable({
