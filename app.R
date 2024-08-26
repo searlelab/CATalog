@@ -35,15 +35,15 @@ ui <- dashboardPage(
     ),
       dashboardBody(
         fluidRow(
-          box(DT::dataTableOutput("results"),
-              style = "height: 200px; overflow-y: scroll; overflow-x: scroll;"),
-          box(DT::dataTableOutput("demo"),
-              style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
+          box(width = 8, DT::dataTableOutput("display"), 
+              style = "height:300px; overflow-y: scroll; overflow-x: scroll;"),
+          box(width = 4, plotOutput("boxplot", height = 300, width = 250))
         ),
         fluidRow(
-          box(DT::dataTableOutput("display"), 
-              style = "height:500px; overflow-y: scroll; overflow-x: scroll;"),
-          box(plotOutput("boxplot", height = 500))
+          box(DT::dataTableOutput("results"),
+              style = "height: 200px; overflow-y: scroll; overflow-x: scroll;"),
+          box(tableOutput("demo"),
+              style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
         )
     )
 )
@@ -98,7 +98,7 @@ server <- function(input, output, session){
     main$go_element
   })
   
-  output$demo <- DT::renderDataTable({
+  output$demo <- renderTable({
     demographics
   })
   
