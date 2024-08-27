@@ -8,6 +8,7 @@ source('./functions/boxplot_wrapper.R')
 source('./functions/cell_parser_wrapper.R')
 source('./functions/create_pattern.R')
 source('./functions/fetch_go_info.R')
+source('./functions/go_chunk.R')
 source('./functions/go_column_mapper.R')
 source('./functions/go_protein_mapper.R')
 source('./functions/load_background_data.R')
@@ -59,6 +60,10 @@ server <- function(input, output, session){
   
   main <- reactiveValues()
   
+  #default to prevent the app from exploding 
+ # main$display_rows_selected = 1
+  main$go_list = NULL
+  
   #initial loading of the data
   foreground <- reactive({
     load_foreground_data()
@@ -71,18 +76,34 @@ server <- function(input, output, session){
   #new observer logic
   observeEvent(input$display_rows_selected,{
     #do not want to reset the table here!
-    id <- input$display_rows_selected
-    protein <- go_protein_mapper(main$data, i = id)
-    print(protein)
-    go_list <- cell_parser_wrapper(protein, GO_data)
+    #id <- input$display_rows_selected
+    #protein <- go_protein_mapper(main$data, i = id)
+    #go_list <- cell_parser_wrapper(protein, GO_data)
     #we can set the specific ontologies for that protein to our reactive container
     #print("remade go list")
+    main$row_selected <- input$display_rows_selected
+    go_list <- go_chunk(data = main$data,
+                        row_id = input$display_rows_selected,
+                        GO_data
+    )
+    main$go_list <- go_list
     main$go_element <- fetch_go_info(go_list, field = input$go_item)
   })
   
   #this is a response to the user chainging the go category
   observeEvent(input$go_item,{
+    print("observed")
+    print(main$row_selected)
     main$data <- foreground() #this induces a table reset
+    #we need to have the go list respond here as well
+    #if(exists("main$row_selected")){
+      #print("triggered")
+      #main$go_element <- fetch_go_info(go_list, field = input$go_item)
+    #}
+    main$go_element <- fetch_go_info(go_list = main$go_list, field = input$go_item)
+    #else{
+      #main$go_element <- NULL
+    #}
   })
   
   observeEvent(input$searchButton,{
@@ -118,6 +139,7 @@ server <- function(input, output, session){
   })
   
   output$boxplot <- renderPlot({
+    req(input$display_rows_selected)
     s = input$display_rows_selected
     plot <- boxplot_wrapper(data = background, i = s)
     plot
