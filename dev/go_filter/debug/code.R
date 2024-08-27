@@ -48,4 +48,11 @@ parse_cell <- function(protein, index, data){
 foo <- parse_cell(protein, 5, data) #0 rows, as expected
 
 #we are running into another issue when plugging this into the main app
+#this involves debugging the cell parser
+#test case willbe M3VUU7_FELCA
+
+protein <- "M3VUU7_FELCA"
+r <- data%>%
+	filter(Column2 == protein)
+
 
