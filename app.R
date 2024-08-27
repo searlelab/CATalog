@@ -43,7 +43,7 @@ ui <- dashboardPage(
         fluidRow(
           box(DT::dataTableOutput("results"),
               style = "height: 200px; overflow-y: scroll; overflow-x: scroll;"),
-          box(tableOutput("demo"),
+          box(div(tableOutput("demo"), style = "font-size:70%"),
               style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
         )
     )
