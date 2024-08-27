@@ -22,7 +22,7 @@ GO_data <- read.csv("go_data.csv")
 ui <- dashboardPage(
     dashboardHeader(title = "CATalog"),
     dashboardSidebar(
-      
+      imageOutput("catalog_logo"),
         radioButtons("go_item", "GO Data: ",
                      c("biological process",
                        "cellular compartment",
@@ -31,21 +31,20 @@ ui <- dashboardPage(
         
         
         textInput("keyword", "Filter proteins by GO: ", value = ""),
-        actionButton("searchButton", "Search"),
-        #actionButton("reset", "Reset table"),
-        imageOutput("catalog_logo")
+        actionButton("searchButton", "Search")
+        
     ),
       dashboardBody(
         fluidRow(
           box(width = 8, DT::dataTableOutput("display"), 
-              style = "height:300px; overflow-y: scroll; overflow-x: scroll;"),
+              style = "height:400px; overflow-y: scroll; overflow-x: scroll;"),
           box(width = 4, plotOutput("boxplot", height = 300, width = 250))
         ),
         fluidRow(
           box(DT::dataTableOutput("results"),
               style = "height: 200px; overflow-y: scroll; overflow-x: scroll;"),
           box(div(tableOutput("demo"), style = "font-size:70%"),
-              style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
+              style = "height: 100px; overflow-y: scroll; overflow-x: scroll;")
         )
     )
 )
@@ -61,7 +60,6 @@ server <- function(input, output, session){
   main <- reactiveValues()
   
   #default to prevent the app from exploding 
- # main$display_rows_selected = 1
   main$go_list = NULL
   
   #initial loading of the data
@@ -75,12 +73,6 @@ server <- function(input, output, session){
   
   #new observer logic
   observeEvent(input$display_rows_selected,{
-    #do not want to reset the table here!
-    #id <- input$display_rows_selected
-    #protein <- go_protein_mapper(main$data, i = id)
-    #go_list <- cell_parser_wrapper(protein, GO_data)
-    #we can set the specific ontologies for that protein to our reactive container
-    #print("remade go list")
     main$row_selected <- input$display_rows_selected
     go_list <- go_chunk(data = main$data,
                         row_id = input$display_rows_selected,
@@ -92,18 +84,8 @@ server <- function(input, output, session){
   
   #this is a response to the user chainging the go category
   observeEvent(input$go_item,{
-    print("observed")
-    print(main$row_selected)
     main$data <- foreground() #this induces a table reset
-    #we need to have the go list respond here as well
-    #if(exists("main$row_selected")){
-      #print("triggered")
-      #main$go_element <- fetch_go_info(go_list, field = input$go_item)
-    #}
     main$go_element <- fetch_go_info(go_list = main$go_list, field = input$go_item)
-    #else{
-      #main$go_element <- NULL
-    #}
   })
   
   observeEvent(input$searchButton,{
@@ -112,10 +94,6 @@ server <- function(input, output, session){
     res <- search_go_data(GO_data, main$data, index, word = input$keyword)
     main$data <- res
   })
-  
-  #observeEvent(input$reset,{
-    #main$data <- foreground()
-  #})
   
   output$catalog_logo <- renderImage({
     list(
@@ -127,6 +105,7 @@ server <- function(input, output, session){
   }, deleteFile = FALSE)
   
   output$results <- DT::renderDataTable({
+    req(input$display_rows_selected)
     main$go_element
   })
   
