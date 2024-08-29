@@ -22,7 +22,7 @@ GO_data <- read.csv("go_data.csv")
 ui <- dashboardPage(
     dashboardHeader(title = "CATalog"),
     dashboardSidebar(
-      imageOutput("catalog_logo"),
+      #imageOutput("catalog_logo"),
         radioButtons("go_item", "GO Data: ",
                      c("biological process",
                        "cellular compartment",
@@ -95,14 +95,14 @@ server <- function(input, output, session){
     main$data <- res
   })
   
-  output$catalog_logo <- renderImage({
-    list(
-      src = file.path("logo.png"),
-      contentType = "image/png",
-      width = 150,
-      height = 150
-    )
-  }, deleteFile = FALSE)
+  #output$catalog_logo <- renderImage({
+    #list(
+      #src = file.path("logo.png"),
+      #contentType = "image/png",
+      #width = 150,
+      #height = 150
+    #)
+  #}, deleteFile = FALSE)
   
   output$results <- DT::renderDataTable({
     req(input$display_rows_selected)
