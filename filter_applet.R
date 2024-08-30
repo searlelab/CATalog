@@ -31,7 +31,7 @@ server <- function(input, output, session){
 	})
 
 	#primary observer
-	observeEvent(foreground(),{
+	obeerveEvent(foreground(),{
 			     main$data <- foreground()
 	})
 	

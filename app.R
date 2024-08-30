@@ -8,6 +8,7 @@ source('./functions/boxplot_wrapper.R')
 source('./functions/cell_parser_wrapper.R')
 source('./functions/create_pattern.R')
 source('./functions/fetch_go_info.R')
+source('./functions/filter_foreground.R')
 source('./functions/go_chunk.R')
 source('./functions/go_column_mapper.R')
 source('./functions/go_protein_mapper.R')
@@ -18,6 +19,7 @@ source('./functions/parse_cell.R')
 source('./functions/search_go_data.R')
 
 GO_data <- read.csv("go_data.csv")
+deltas <- read.csv("deltas.csv")
 
 ui <- dashboardPage(
     dashboardHeader(title = "CATalog"),
@@ -31,7 +33,11 @@ ui <- dashboardPage(
         
         
         textInput("keyword", "Filter proteins by GO: ", value = ""),
-        actionButton("searchButton", "Search")
+        actionButton("searchButton", "Search"),
+        #new filtering protocol
+        selectInput("sampleType", "Filter by highest biofluid:",
+                    choice = c("all", "urine", "serum", "plasma")),
+        actionButton("selectButton", "Filter")
         
     ),
       dashboardBody(
@@ -94,6 +100,24 @@ server <- function(input, output, session){
     res <- search_go_data(GO_data, main$data, index, word = input$keyword)
     main$data <- res
   })
+  
+  #observer to control the drop-down menu
+  observeEvent(input$sampleType,{
+    main$sample_selection <- input$sampleType
+    print(main$sample_selection)
+  })
+  
+  #observer to perform the filtration step based on the button
+  observeEvent(input$selectButton,{
+    if(main$sample_selection == "all"){ #reset the table based on the 'all' selection
+      main$data <- foreground()
+    }
+    else{
+      output <- filter_foreground(deltas, main$data, target = main$sample_selection)
+      main$data <- output
+    }
+  })
+  
   
   #output$catalog_logo <- renderImage({
     #list(
