@@ -24,7 +24,7 @@ deltas <- read.csv("deltas.csv")
 ui <- dashboardPage(
     dashboardHeader(title = "CATalog"),
     dashboardSidebar(
-      #imageOutput("catalog_logo"),
+      
         radioButtons("go_item", "GO Data: ",
                      c("biological process",
                        "cellular compartment",
@@ -37,7 +37,8 @@ ui <- dashboardPage(
         #new filtering protocol
         selectInput("sampleType", "Filter by highest biofluid:",
                     choice = c("all", "urine", "serum", "plasma")),
-        actionButton("selectButton", "Filter")
+        actionButton("selectButton", "Filter"),
+        imageOutput("catalog_logo")
         
     ),
       dashboardBody(
@@ -119,14 +120,14 @@ server <- function(input, output, session){
   })
   
   
-  #output$catalog_logo <- renderImage({
-    #list(
-      #src = file.path("logo.png"),
-      #contentType = "image/png",
-      #width = 150,
-      #height = 150
-    #)
-  #}, deleteFile = FALSE)
+  output$catalog_logo <- renderImage({
+    list(
+      src = file.path("logo.png"),
+      contentType = "image/png",
+      width = 150,
+      height = 150
+    )
+  }, deleteFile = FALSE)
   
   output$results <- DT::renderDataTable({
     req(input$display_rows_selected)
