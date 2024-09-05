@@ -24,7 +24,7 @@ GO_data <- read.csv("go_data.csv")
 deltas <- read.csv("deltas.csv")
 
 ui <- dashboardPage(skin = "black",
-    dashboardHeader(title = "CATalog"),
+    dashboardHeader(title = tags$img(src='https://i.ibb.co/x6tH34j/logo4.png', height = '60', width = '120')),
     dashboardSidebar(
         textInput("keyword", "Filter proteins by GO: ", value = ""),
         actionButton("searchButton", "Search"),
