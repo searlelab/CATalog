@@ -44,15 +44,17 @@ ui <- dashboardPage(skin = "black",
     ),
       dashboardBody(
         fluidRow(
-          box(width = 8, DT::dataTableOutput("display"), 
+          column(width = 8,
+            box(width = NULL, DT::dataTableOutput("display"), 
               style = "height:400px; overflow-y: scroll; overflow-x: scroll;"),
-          box(width = 4, plotOutput("boxplot", height = 300, width = 250))
-        ),
-        fluidRow(
-          box(DT::dataTableOutput("results"),
-              style = "height: 200px; overflow-y: scroll; overflow-x: scroll;"),
-          box(div(tableOutput("demo"), style = "font-size:70%"),
+            box(width = NULL, DT::dataTableOutput("results"),
+                style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
+            ),
+          column(width = 4,
+            box(width = NULL, plotOutput("boxplot", height = 300, width = 250)),
+            box(width = NULL, div(tableOutput("demo"), style = "font-size:70%"),
               style = "height: 100px; overflow-y: scroll; overflow-x: scroll;")
+          ),
         )
     )
 )
