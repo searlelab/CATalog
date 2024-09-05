@@ -130,6 +130,12 @@ server <- function(input, output, session){
   #observer for the plot annotation
   observeEvent(input$plot_labels,{
     main$plot_annotation <- input$plot_labels
+    if(main$plot_annotation == "off"){
+      main$demographics <- NULL
+    }
+    if(main$plot_annotation == "on"){
+      main$demographics <- demographics
+    }
   })
   
   
@@ -148,7 +154,7 @@ server <- function(input, output, session){
   })
   
   output$demo <- renderTable({
-    demographics
+    main$demographics
   })
   
   output$display <- DT::renderDataTable({
