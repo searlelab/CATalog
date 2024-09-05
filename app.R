@@ -16,6 +16,7 @@ source('./functions/go_protein_mapper.R')
 source('./functions/load_background_data.R')
 source('./functions/load_foreground_data.R')
 source('./functions/make_boxplot.R')
+source('./functions/make_boxplot_unannotated.R')
 source('./functions/parse_cell.R')
 source('./functions/search_go_data.R')
 
@@ -31,6 +32,8 @@ ui <- dashboardPage(skin = "black",
         #new filtering protocol
         selectInput("sampleType", "Filter by highest biofluid:",
                     choice = c("all", "urine", "serum", "plasma")),
+        radioButtons("plot_labels", "Sample annotation: ",
+                     c("off", "on")),
         #imageOutput("catalog_logo"),
         actionButton("selectButton", "Filter"),
         radioButtons("go_item", "GO Data: ",
@@ -51,7 +54,7 @@ ui <- dashboardPage(skin = "black",
             box(width = NULL, plotOutput("boxplot", height = 300, width = 250)),
             box(width = NULL, div(tableOutput("demo"), style = "font-size:70%"),
               style = "height: 100px")
-          ),
+          )
         )
     )
 )
@@ -124,6 +127,11 @@ server <- function(input, output, session){
     }
   })
   
+  #observer for the plot annotation
+  observeEvent(input$plot_labels,{
+    main$plot_annotation <- input$plot_labels
+  })
+  
   
   #output$catalog_logo <- renderImage({
     #list(
@@ -150,7 +158,7 @@ server <- function(input, output, session){
   output$boxplot <- renderPlot({
     req(input$display_rows_selected)
     s = input$display_rows_selected
-    plot <- boxplot_wrapper(data = background, i = s)
+    plot <- boxplot_wrapper(data = background, i = s, flag = main$plot_annotation)
     plot
   })
   
