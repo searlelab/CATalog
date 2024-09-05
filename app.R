@@ -27,6 +27,7 @@ ui <- dashboardPage(skin = "black",
     dashboardSidebar(
         textInput("keyword", "Filter proteins by GO: ", value = ""),
         actionButton("searchButton", "Search"),
+        actionButton("resetButton", "reset"),
         #new filtering protocol
         selectInput("sampleType", "Filter by highest biofluid:",
                     choice = c("all", "urine", "serum", "plasma")),
@@ -99,6 +100,11 @@ server <- function(input, output, session){
     index <- go_column_mapper(input$go_item)
     res <- search_go_data(GO_data, main$data, index, word = input$keyword)
     main$data <- res
+  })
+  
+  observeEvent(input$resetButton,{
+    main$data <- foreground()
+    updateTextInput(session,"keyword", value="")
   })
   
   #observer to control the drop-down menu
