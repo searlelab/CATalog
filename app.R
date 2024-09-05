@@ -9,6 +9,7 @@ source('./functions/cell_parser_wrapper.R')
 source('./functions/create_pattern.R')
 source('./functions/fetch_go_info.R')
 source('./functions/filter_foreground.R')
+source('./functions/format_data.R')
 source('./functions/go_chunk.R')
 source('./functions/go_column_mapper.R')
 source('./functions/go_protein_mapper.R')
@@ -21,7 +22,7 @@ source('./functions/search_go_data.R')
 GO_data <- read.csv("go_data.csv")
 deltas <- read.csv("deltas.csv")
 
-ui <- dashboardPage(
+ui <- dashboardPage(skin = "black",
     dashboardHeader(title = "CATalog"),
     dashboardSidebar(
       
