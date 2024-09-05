@@ -25,22 +25,18 @@ deltas <- read.csv("deltas.csv")
 ui <- dashboardPage(skin = "black",
     dashboardHeader(title = "CATalog"),
     dashboardSidebar(
-      
-        radioButtons("go_item", "GO Data: ",
-                     c("biological process",
-                       "cellular compartment",
-                       "molecular function"),
-                     selected = "biological process"),
-        
-        
         textInput("keyword", "Filter proteins by GO: ", value = ""),
         actionButton("searchButton", "Search"),
         #new filtering protocol
         selectInput("sampleType", "Filter by highest biofluid:",
                     choice = c("all", "urine", "serum", "plasma")),
+        #imageOutput("catalog_logo"),
         actionButton("selectButton", "Filter"),
-        imageOutput("catalog_logo")
-        
+        radioButtons("go_item", "GO Data: ",
+                     c("biological process",
+                       "cellular compartment",
+                       "molecular function"),
+                     selected = "biological process")
     ),
       dashboardBody(
         fluidRow(
@@ -53,7 +49,7 @@ ui <- dashboardPage(skin = "black",
           column(width = 4,
             box(width = NULL, plotOutput("boxplot", height = 300, width = 250)),
             box(width = NULL, div(tableOutput("demo"), style = "font-size:70%"),
-              style = "height: 100px; overflow-y: scroll; overflow-x: scroll;")
+              style = "height: 100px")
           ),
         )
     )
@@ -94,7 +90,7 @@ server <- function(input, output, session){
   
   #this is a response to the user chainging the go category
   observeEvent(input$go_item,{
-    main$data <- foreground() #this induces a table reset
+    #main$data <- foreground() #this induces a table reset
     main$go_element <- fetch_go_info(go_list = main$go_list, field = input$go_item)
   })
   
@@ -123,14 +119,14 @@ server <- function(input, output, session){
   })
   
   
-  output$catalog_logo <- renderImage({
-    list(
-      src = file.path("logo.png"),
-      contentType = "image/png",
-      width = 150,
-      height = 150
-    )
-  }, deleteFile = FALSE)
+  #output$catalog_logo <- renderImage({
+    #list(
+      #src = file.path("logo.png"),
+      #contentType = "image/png",
+      #width = 150,
+      #height = 150
+    #)
+  #}, deleteFile = FALSE)
   
   output$results <- DT::renderDataTable({
     req(input$display_rows_selected)
