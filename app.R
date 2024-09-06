@@ -8,7 +8,7 @@ source('./functions/boxplot_wrapper.R')
 source('./functions/cell_parser_wrapper.R')
 source('./functions/create_pattern.R')
 source('./functions/fetch_go_info.R')
-source('./functions/filter_foreground.R')
+source('./functions/filter_foreground_new.R')
 source('./functions/format_data.R')
 source('./functions/go_chunk.R')
 source('./functions/go_column_mapper.R')
@@ -21,7 +21,7 @@ source('./functions/parse_cell.R')
 source('./functions/search_go_data.R')
 
 GO_data <- read.csv("go_data.csv")
-deltas <- read.csv("deltas.csv")
+deltas <- read.csv("deltas_binary.csv")
 
 ui <- dashboardPage(skin = "black",
     dashboardHeader(title = tags$img(src='https://i.ibb.co/x6tH34j/logo4.png', height = '60', width = '120')),
@@ -32,10 +32,13 @@ ui <- dashboardPage(skin = "black",
         #new filtering protocol
         selectInput("sampleType", "Filter by highest biofluid:",
                     choice = c("all", "urine", "serum", "plasma")),
+        actionButton("selectButton", "Filter"),
         radioButtons("plot_labels", "Sample annotation: ",
                      c("off", "on")),
+        #selectInput("annotation_color", "Annotation color: ",
+                    #choice = c("black", "chocolate", "brown", "cadetblue2", "antiquewhite4", "darkorchid3")),
         #imageOutput("catalog_logo"),
-        actionButton("selectButton", "Filter"),
+        
         radioButtons("go_item", "GO Data: ",
                      c("biological process",
                        "cellular compartment",
@@ -52,7 +55,7 @@ ui <- dashboardPage(skin = "black",
             ),
           column(width = 4,
             box(width = NULL, plotOutput("boxplot", height = 300, width = 250)),
-            box(width = NULL, div(tableOutput("demo"), style = "font-size:70%"),
+            box(width = NULL, div(tableOutput("demo"), style = "font-size:70%; overflow-y: scroll"),
               style = "height: 100px")
           )
         )
@@ -122,7 +125,7 @@ server <- function(input, output, session){
       main$data <- foreground()
     }
     else{
-      output <- filter_foreground(deltas, main$data, target = main$sample_selection)
+      output <- filter_foreground_new(main$data, deltas, field = main$sample_selection)
       main$data <- output
     }
   })
@@ -160,6 +163,11 @@ server <- function(input, output, session){
   output$display <- DT::renderDataTable({
     datatable(main$data, selection = 'single')
   })
+  
+  #observer to control the color
+  #observeEvent(input$annotation_color,{
+    #main$color <- input$annotation_color
+  #})
   
   output$boxplot <- renderPlot({
     req(input$display_rows_selected)
