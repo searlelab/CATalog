@@ -9,7 +9,7 @@ make_boxplot_unannotated <- function(df, name){
 		      legend.title=element_text(size = 14),
 		      legend.text=element_text(size = 12))+
 		scale_fill_manual(values = c('#D55382', '#003F5C', '#FFA600'))+
-		geom_jitter(color = "black", position = position_jitter(seed = 1))+
+		geom_jitter(color = "black", position = position_jitter(seed = 1, width = 0.2))+
 		ylab("relative intensity")+
 		ggtitle(name)
 	plot
