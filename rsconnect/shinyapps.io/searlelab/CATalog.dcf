@@ -1,0 +1,12 @@
+name: CATalog
+title: CATalog
+username: searlelab
+account: searlelab
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12648885
+bundleId: 9079644
+url: https://searlelab.shinyapps.io/CATalog/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
