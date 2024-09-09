@@ -1,6 +1,6 @@
 make_boxplot_unannotated <- function(df, name){
 	plot <- ggplot(df, aes(x = as.factor(biofluid), y = values, fill = biofluid, label = labels))+
-		geom_boxplot()+
+		geom_boxplot(outlier.shape = NA)+
 		theme(axis.title.x=element_blank(),
 		      axis.text.x=element_blank(),
 		      axis.ticks.x=element_blank(),
