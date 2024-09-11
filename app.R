@@ -72,6 +72,7 @@ server <- function(input, output, session){
   demographics <- read.csv("demographics.csv")
   
   main <- reactiveValues()
+  search <- reactiveValues()
   
   #default to prevent the app from exploding 
   main$go_list = NULL
@@ -84,6 +85,10 @@ server <- function(input, output, session){
   observeEvent(foreground(),{
     main$data <- foreground()
   })
+  
+  #this is related to fixing a complication with the filtering procss
+  main$search_cache <- NULL
+  search$onging <- FALSE
   
   #making the background data reactive as well to fix an issue
   background <- reactive({
@@ -120,12 +125,20 @@ server <- function(input, output, session){
     main$data <- res
     res_background <- search_go_data_background(GO_data, main$back_data, index, word = input$keyword)
     main$back_data <- res_background
+    #storing the search data
+    main$search_cache <- res
+    print(nrow(main$search_cache))
+    search$ongoing <- TRUE
+    print(search$ongoing)
   })
   
   observeEvent(input$resetButton,{
     main$data <- foreground()
     main$back_data <- background()
     updateTextInput(session,"keyword", value="")
+    #resetting the flag for searching
+    search$ongoing <- FALSE
+    print(search$ongoing)
   })
   
   #observer to control the drop-down menu
@@ -135,11 +148,28 @@ server <- function(input, output, session){
   })
   
   #observer to perform the filtration step based on the button
+  #the first case is if there is no ongoing search
   observeEvent(input$selectButton,{
-    if(main$sample_selection == "all"){ #reset the table based on the 'all' selection
-      main$data <- foreground()
+
+    if(main$sample_selection == "all" & search$onging == FALSE){ #reset the table based on the 'all' selection
+      print("check 1")
+      main$data <- foreground() #reset the table
+    }
+    else if(main$sample_selection == "all" & search$onging == TRUE){
+      print("check 2")
+      main$data <- main$search_cache #use cached search data
+    }
+    #if we have a cached search, use those results to keep filtering constent
+    else if(main$sample_selection != "all" & search$ongoing == TRUE){
+      print("check 3")
+      #main$data <- main$search_cache #use cached search data
+      output <- filter_foreground_new(main$search_cache, deltas, field = main$sample_selection)
+      main$data <- output
     }
     else{
+      print("check 4")
+      #we can insert a reset here to prevent problems
+      main$data <- foreground()
       output <- filter_foreground_new(main$data, deltas, field = main$sample_selection)
       main$data <- output
     }
