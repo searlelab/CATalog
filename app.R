@@ -19,6 +19,7 @@ source('./functions/make_boxplot.R')
 source('./functions/make_boxplot_unannotated.R')
 source('./functions/parse_cell.R')
 source('./functions/search_go_data.R')
+source('./functions/search_go_data_background.R')
 
 GO_data <- read.csv("go_data.csv")
 deltas <- read.csv("deltas_binary.csv")
@@ -66,7 +67,7 @@ ui <- dashboardPage(skin = "black",
 server <- function(input, output, session){
   
   
-  background <- load_background_data()
+  #background <- load_background_data()
   
   demographics <- read.csv("demographics.csv")
   
@@ -82,6 +83,15 @@ server <- function(input, output, session){
   
   observeEvent(foreground(),{
     main$data <- foreground()
+  })
+  
+  #making the background data reactive as well to fix an issue
+  background <- reactive({
+    load_background_data()
+  })
+  
+  observeEvent(background(),{
+    main$back_data <- background()
   })
   
   #new observer logic
@@ -102,14 +112,19 @@ server <- function(input, output, session){
   })
   
   observeEvent(input$searchButton,{
+    #restoring defaults 
     main$data <- foreground()
+    main$back_data <- background()
     index <- go_column_mapper(input$go_item)
     res <- search_go_data(GO_data, main$data, index, word = input$keyword)
     main$data <- res
+    res_background <- search_go_data_background(GO_data, main$back_data, index, word = input$keyword)
+    main$back_data <- res_background
   })
   
   observeEvent(input$resetButton,{
     main$data <- foreground()
+    main$back_data <- background()
     updateTextInput(session,"keyword", value="")
   })
   
@@ -172,7 +187,9 @@ server <- function(input, output, session){
   output$boxplot <- renderPlot({
     req(input$display_rows_selected)
     s = input$display_rows_selected
-    plot <- boxplot_wrapper(data = background, i = s, flag = main$plot_annotation)
+    #use of a static background object here is a bit dangerous
+    #this is what is causing the desynchronization between the plots and the search
+    plot <- boxplot_wrapper(data = main$back_data, i = s, flag = main$plot_annotation)
     plot
   })
   
