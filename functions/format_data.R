@@ -5,9 +5,9 @@ format_data <- function(data, i){
 	values <- as.numeric(x)
 	labels <- colnames(x)
 
-	urine <- replicate(9, "urine")
-	plasma<- replicate(9, "plasma")
-	serum <- replicate(9, "serum")
+	urine <- replicate(8, "urine")
+	plasma<- replicate(8, "plasma")
+	serum <- replicate(8, "serum")
 
 	biofluid <- c(urine, plasma, serum)
 
