@@ -22,7 +22,7 @@ source('./functions/search_go_data.R')
 source('./functions/search_go_data_background.R')
 
 GO_data <- read.csv("go_data.csv")
-deltas <- read.csv("deltas_binary.csv")
+deltas <- read.csv("deltas.csv")
 
 ui <- dashboardPage(skin = "black",
     dashboardHeader(title = tags$img(src='https://i.ibb.co/x6tH34j/logo4.png', height = '60', width = '120')),
@@ -33,7 +33,7 @@ ui <- dashboardPage(skin = "black",
         #new filtering protocol
         selectInput("sampleType", "Filter by highest biofluid:",
                     choice = c("all", "urine", "serum", "plasma")),
-        actionButton("selectButton", "Filter"),
+        actionButton("filterButton", "Filter"),
         radioButtons("plot_labels", "Sample annotation: ",
                      c("off", "on")),
         #selectInput("annotation_color", "Annotation color: ",
@@ -86,10 +86,6 @@ server <- function(input, output, session){
     main$data <- foreground()
   })
   
-  #this is related to fixing a complication with the filtering procss
-  main$search_cache <- NULL
-  search$onging <- FALSE
-  
   #making the background data reactive as well to fix an issue
   background <- reactive({
     load_background_data()
@@ -99,6 +95,10 @@ server <- function(input, output, session){
     main$back_data <- background()
   })
   
+  #this is related to fixing a complication with the filtering process
+  main$search_cache <- NULL
+  search$ongoing <- FALSE
+
   #new observer logic
   observeEvent(input$display_rows_selected,{
     main$row_selected <- input$display_rows_selected
@@ -149,13 +149,17 @@ server <- function(input, output, session){
   
   #observer to perform the filtration step based on the button
   #the first case is if there is no ongoing search
-  observeEvent(input$selectButton,{
-
-    if(main$sample_selection == "all" & search$onging == FALSE){ #reset the table based on the 'all' selection
+  observeEvent(input$filterButton,{
+    print("filter button pressed")
+    print(main$sample_selection)
+    print(search$ongoing )
+    
+    #it appears that this is trying to run regardless of what is selected in the box
+    if(main$sample_selection == "all" & search$ongoing == FALSE){ #reset the table based on the 'all' selection
       print("check 1")
       main$data <- foreground() #reset the table
     }
-    else if(main$sample_selection == "all" & search$onging == TRUE){
+    else if(main$sample_selection == "all" & search$ongoing == TRUE){
       print("check 2")
       main$data <- main$search_cache #use cached search data
     }
