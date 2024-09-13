@@ -1,8 +1,18 @@
-filter_foreground <- function(deltas, foreground, target){
-	#searching for rows that contain the target word
-	df <- deltas[grepl(target, deltas[,8], ignore.case = TRUE),]
-	entries <- df$Entry #getting the entries
-	output <- foreground%>%
+filter_foreground <- function(data, deltas, field){
+	if(field == "urine"){
+		res <- deltas%>%
+			filter(FlagUrine == 0)
+	}
+	if(field == "serum"){
+		res <- deltas%>%
+			filter(FlagSerum == 0)
+	}
+	if(field == "plasma"){
+		res <- deltas%>%
+			filter(FlagPlasma == 0)
+	}
+	entries <- res$Entry
+	output <- data%>%
 		filter(Entry %in% entries)
-	output
+
 }

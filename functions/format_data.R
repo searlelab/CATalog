@@ -13,7 +13,6 @@ format_data <- function(data, i){
 
 	df <- data.frame(values, biofluid, labels)
 
-	#trick to return multiple outputs from an R function
 	output <- list(name, df)
 	output
 }

@@ -8,14 +8,14 @@ source('./functions/boxplot_wrapper.R')
 source('./functions/cell_parser_wrapper.R')
 source('./functions/create_pattern.R')
 source('./functions/fetch_go_info.R')
-source('./functions/filter_foreground_new.R')
+source('./functions/filter_foreground.R')
 source('./functions/format_data.R')
 source('./functions/go_chunk.R')
 source('./functions/go_column_mapper.R')
 source('./functions/go_protein_mapper.R')
 source('./functions/load_background_data.R')
 source('./functions/load_foreground_data.R')
-source('./functions/make_boxplot.R')
+source('./functions/make_boxplot_annotated.R')
 source('./functions/make_boxplot_unannotated.R')
 source('./functions/parse_cell.R')
 source('./functions/search_go_data.R')
@@ -112,7 +112,6 @@ server <- function(input, output, session){
   
   #this is a response to the user chainging the go category
   observeEvent(input$go_item,{
-    #main$data <- foreground() #this induces a table reset
     main$go_element <- fetch_go_info(go_list = main$go_list, field = input$go_item)
   })
   
@@ -167,14 +166,14 @@ server <- function(input, output, session){
     else if(main$sample_selection != "all" & search$ongoing == TRUE){
       print("check 3")
       #main$data <- main$search_cache #use cached search data
-      output <- filter_foreground_new(main$search_cache, deltas, field = main$sample_selection)
+      output <- filter_foreground(main$search_cache, deltas, field = main$sample_selection)
       main$data <- output
     }
     else{
       print("check 4")
       #we can insert a reset here to prevent problems
       main$data <- foreground()
-      output <- filter_foreground_new(main$data, deltas, field = main$sample_selection)
+      output <- filter_foreground(main$data, deltas, field = main$sample_selection)
       main$data <- output
     }
   })
