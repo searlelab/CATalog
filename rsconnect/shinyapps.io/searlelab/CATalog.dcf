@@ -5,7 +5,7 @@ account: searlelab
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12648885
-bundleId: 9093506
+bundleId: 9094611
 url: https://searlelab.shinyapps.io/CATalog/
 version: 1
 asMultiple: FALSE
