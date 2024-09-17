@@ -19,6 +19,7 @@ source('./functions/make_boxplot_unannotated.R')
 source('./functions/parse_cell.R')
 source('./functions/search_go_data_background.R')
 source('./functions/search_go_data_foreground.R')
+source('./functions/spoof_dataframe.R')
 
 GO_data <- read.csv("./data/go_data.csv")
 deltas <- read.csv("./data/deltas.csv")
