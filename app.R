@@ -20,6 +20,7 @@ source('./functions/parse_cell.R')
 source('./functions/search_go_data_background.R')
 source('./functions/search_go_data_foreground.R')
 source('./functions/spoof_dataframe.R')
+source('./functions/update_background.R')
 
 GO_data <- read.csv("./data/go_data.csv")
 deltas <- read.csv("./data/deltas.csv")
@@ -84,7 +85,8 @@ server <- function(input, output, session){
     main$back_data <- background()
   })
   
-  main$search_cache <- NULL
+  main$search_cache_foreground <- NULL
+  main$search_cache_background <- NULL
   search$ongoing <- FALSE
 
   observeEvent(input$display_rows_selected,{
@@ -109,7 +111,8 @@ server <- function(input, output, session){
     main$data <- res
     res_background <- search_go_data_background(GO_data, main$back_data, index, word = input$keyword)
     main$back_data <- res_background
-    main$search_cache <- res
+    main$search_cache_foreground <- res
+    main$search_cache_background <- res_background
     print(nrow(main$search_cache))
     search$ongoing <- TRUE
     print(search$ongoing)
@@ -134,19 +137,26 @@ server <- function(input, output, session){
     
     if(main$sample_selection == "all" & search$ongoing == FALSE){ 
       main$data <- foreground() 
+      main$back_data <- background()
     }
     else if(main$sample_selection == "all" & search$ongoing == TRUE){
-      main$data <- main$search_cache 
+      main$data <- main$search_cache_foreground
+      main$back_data <- main$search_cache_background
     }
  
     else if(main$sample_selection != "all" & search$ongoing == TRUE){
-      output <- filter_foreground(main$search_cache, deltas, field = main$sample_selection)
+      output <- filter_foreground(main$search_cache_foreground, deltas, field = main$sample_selection)
+      background_output <- update_background(output, main$search_cache_background)
       main$data <- output
+      main$back_data <- background_output
     }
     else{
       main$data <- foreground()
+      main$back_data <- background()
       output <- filter_foreground(main$data, deltas, field = main$sample_selection)
+      background_output <- update_background(output, main$back_data)
       main$data <- output
+      main$back_data <- background_output
     }
   })
   
