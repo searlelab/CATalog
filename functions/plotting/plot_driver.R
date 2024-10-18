@@ -1,5 +1,5 @@
-boxplot_driver <- function(data, entry, flag){
-	output <- format_data(data, entry)
+plot_driver <- function(data, entry, flag){
+	output <- format_boxplot_data(data, entry)
 	name <- unlist(output[1])
 	df <- as.data.frame(output[[2]])
 	if(flag == "off"){

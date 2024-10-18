@@ -14,11 +14,11 @@ demographics <- read.csv("./data/demographics.csv")
 source('./functions/load_foreground_data.R')
 source('./functions/map_entry_to_index.R')
 
-#boxplot functions
-source('./functions/boxplot/boxplot_driver.R')
-source('./functions/boxplot/format_data.R')
-source('./functions/boxplot/make_boxplot_annotated.R')
-source('./functions/boxplot/make_boxplot_unannotated.R')
+#plotting functions
+source('./functions/plotting/plot_driver.R')
+source('./functions/plotting/format_boxplot_data.R')
+source('./functions/plotting/make_boxplot_annotated.R')
+source('./functions/plotting/make_boxplot_unannotated.R')
 
 #gene ontology functions
 source('./functions/gene_ontology/go_processor.R')
