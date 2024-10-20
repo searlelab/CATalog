@@ -21,7 +21,8 @@ source('./functions/plotting/make_boxplot_annotated.R')
 source('./functions/plotting/make_boxplot_unannotated.R')
 source('./functions/plotting/annotated_frame_generator.R')
 source('./functions/plotting/annotate_row.R')
-source('./functions/plotting/make_scatterplot.R')
+source('./functions/plotting/make_age_scatterplot.R')
+source('./functions/plotting/make_bcs_scatterplot.R')
 source('./functions/plotting/set_plot.R')
 
 #gene ontology functions
@@ -55,7 +56,7 @@ ui <- dashboardPage(skin = "black",
                                      "molecular function"),
                                    selected = "biological process"),
                       radioButtons("plot_display", "Display Plot: ",
-                                   c("Global Boxplot", "By Age"),
+                                   c("Global Boxplot", "By Age", "By BCS"),
                                    selected = "Global Boxplot")
                     ),
                     dashboardBody(

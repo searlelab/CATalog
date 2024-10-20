@@ -13,8 +13,9 @@ plot_driver <- function(data, entry, flag, demographics){
 	r <- data%>%
 		filter(Entry == entry)
 	df_annotated <- annotated_frame_generator(r, demographics)
-	scatterplot <- make_scatterplot(df_annotated, name = entry)
-	plots <- list(boxplot, scatterplot)
+	age_scatterplot <- make_age_scatterplot(df_annotated, name = entry)
+	bcs_scatterplot <- make_bcs_scatterplot(df_annotated, name = entry)
+	plots <- list(boxplot, age_scatterplot, bcs_scatterplot)
 	plots
 }
 

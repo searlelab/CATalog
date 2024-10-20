@@ -1,4 +1,4 @@
-make_scatterplot <- function(df, name){
+make_age_scatterplot <- function(df, name){
 	df_long <- pivot_longer(df, cols = c("U", "P", "S"), names_to = "Measurement", values_to = "Value")
 	plot <- ggplot(df_long, aes(x = age, y = Value, color = Measurement))+
 		geom_point()+

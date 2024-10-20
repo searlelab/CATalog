@@ -6,6 +6,7 @@ annotate_row <- function(r, l, demographics){
 	colnames(s) <- sub("^.", "", colnames(s))
 	s$age <- as.numeric(annotations[1])
 	s$sex <- annotations[2]
+	s$bcs <- annotations[3]
 	s$cat <- l
 	s
 }
