@@ -1,4 +1,5 @@
 annotate_row <- function(r, l, demographics){
+	r <- subset(r, select = -c(toremove, Reviewed, Entry, Protein.names, Gene.Names))
 	s <- r%>%
 		dplyr::select(starts_with(l))
 	annotations <- demographics[, grep(l, colnames(demographics), value = TRUE)]

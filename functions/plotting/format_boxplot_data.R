@@ -2,7 +2,7 @@ format_boxplot_data <- function(data, entry){
 	r <- data%>%
 		filter(Entry == entry)
 	name <- r[,4]
-	x <- subset(r, select = -c(dropme, Reviewed, Entry, Protein.names, Gene.Names))
+	x <- subset(r, select = -c(toremove, Reviewed, Entry, Protein.names, Gene.Names))
 	values <- as.numeric(x)
 	labels <- colnames(x)
 
