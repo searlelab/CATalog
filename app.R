@@ -14,16 +14,11 @@ demographics <- read.csv("./data/demographics.csv")
 source('./functions/load_foreground_data.R')
 source('./functions/map_entry_to_index.R')
 
-#plotting functions
-source('./functions/plotting/plot_driver.R')
-source('./functions/plotting/format_boxplot_data.R')
-source('./functions/plotting/make_boxplot_annotated.R')
-source('./functions/plotting/make_boxplot_unannotated.R')
-source('./functions/plotting/annotated_frame_generator.R')
-source('./functions/plotting/annotate_row.R')
-source('./functions/plotting/make_age_scatterplot.R')
-source('./functions/plotting/make_bcs_scatterplot.R')
-source('./functions/plotting/set_plot.R')
+#boxplot functions
+source('./functions/boxplot/boxplot_driver.R')
+source('./functions/boxplot/format_data.R')
+source('./functions/boxplot/make_boxplot_annotated.R')
+source('./functions/boxplot/make_boxplot_unannotated.R')
 
 #gene ontology functions
 source('./functions/gene_ontology/go_processor.R')
@@ -54,10 +49,7 @@ ui <- dashboardPage(skin = "black",
                                    c("biological process",
                                      "cellular compartment",
                                      "molecular function"),
-                                   selected = "biological process"),
-                      radioButtons("plot_display", "Display Plot: ",
-                                   c("Global Boxplot", "By Age", "By BCS"),
-                                   selected = "Global Boxplot")
+                                   selected = "biological process")
                     ),
                     dashboardBody(
                       fluidRow(
@@ -68,7 +60,7 @@ ui <- dashboardPage(skin = "black",
                                    style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
                         ),
                         column(width = 4,
-                               box(width = NULL, plotOutput("show_plot", height = 300, width = 250)),
+                               box(width = NULL, plotOutput("boxplot", height = 300, width = 250)),
                                box(width = NULL, div(tableOutput("demo"), style = "font-size:70%; overflow-y: scroll"),
                                    style = "height: 100px")
                         )
@@ -80,7 +72,6 @@ server <- function(input, output, session){
   Database <- reactiveValues()
   Search <- reactiveValues() #search-related features
   Params <- reactiveValues() #user settings
-  Plot <- reactiveValues() #holds plot information
   Global <- reactiveValues() #elements that are not related to the core database but need to be accessed by disprate functions
   
   Database$go_list = NULL
@@ -105,19 +96,12 @@ server <- function(input, output, session){
     Database$ontology <- set_ontology(go_list = Global$all_ontologies, field = Params$go_field)
   })
   
-  #switches between what plot is currently shown
-  observeEvent(input$plot_display,{
-    Params$selected_plot <- input$plot_display
-    Plot$current_plot <- set_plot(Plot$plots, plot_type = Params$selected_plot)
-  })
-  
   #triggers when clicking on a row of the main display
   observeEvent(input$display_rows_selected,{
     Database$current_entry <- map_entry_to_index(Database$dataset, index = input$display_rows_selected)
     Global$all_ontologies <- go_processor(entry = Database$current_entry, go_data)
     Database$ontology <- set_ontology(go_list = Global$all_ontologies, field = Params$go_field)
-    Plot$plots <- plot_driver(data = background, entry = Database$current_entry, flag = Params$is_annotated,  demographics)
-    Plot$current_plot <- set_plot(plots = Plot$plots, plot_type = Params$selected_plot)
+    print(head(Database$ontology))
   })
   
   output$display <- DT::renderDataTable({
@@ -187,9 +171,10 @@ server <- function(input, output, session){
   })
   
   #output for the plot
-  output$show_plot <- renderPlot({
+  output$boxplot <- renderPlot({
     req(input$display_rows_selected)
-    Plot$current_plot
+    plot <- boxplot_driver(data = background, entry = Database$current_entry, flag = Params$is_annotated)
+    plot
   })
   
   

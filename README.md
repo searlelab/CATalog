@@ -1,5 +1,2 @@
 # CATalog
-Selecting the optimal biofluid for accurate biomarker assessment is vital to an informative clinical assay. However, in the initial stages of candidate biomarker discovery, the biologically appropriate biofluid might be unclear. To resolve this dilemma, we demonstrate a mass spectrometry-based workflow where paired urine, plasma, and serum samples are processed in parallel, creating biofluid-specific peptide libraries. These libraries are then harmonized to monitor consistent peptides and transitions, enabling cross-fluid normalization and quantitative comparisons. We also present a reference dataset, “CATalog,” to aid in determining which biofluid to pursue based on protein relative abundance in healthy feline urine, plasma, and serum. Using this workflow and database, we explore the interchangeability of blood biofluid proteins compared to urinary proteins relating to sample processing, relative protein quantification, and clinical application. Our results suggest that when processed correctly, urine could sometimes represent blood biofluid proteins without requiring venipuncture or sample depletion of high abundant proteins.
-
-CATalog is freely available as a online web resource at [https://searlelab.shinyapps.io/CATalog/](https://searlelab.shinyapps.io/CATalog/).
-
+Katelyn's dashboard
