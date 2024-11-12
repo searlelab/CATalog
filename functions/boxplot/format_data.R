@@ -1,14 +1,14 @@
 format_data <- function(data, entry){
 	r <- data%>%
 		filter(Entry == entry)
-	name <- r[,4]
-	x <- subset(r, select = -c(dropme, Reviewed, Entry, Protein.names, Gene.Names))
+	name <- r[,2]
+	x <- subset(r, select = -c(Entry, Protein, Gene))
 	values <- as.numeric(x)
 	labels <- colnames(x)
 
-	urine <- replicate(8, "urine")
-	plasma<- replicate(8, "plasma")
-	serum <- replicate(8, "serum")
+	urine <- replicate((ncol(x)/3), "urine")
+	plasma<- replicate((ncol(x)/3), "plasma")
+	serum <- replicate((ncol(x)/3), "serum")
 
 	biofluid <- c(urine, plasma, serum)
 

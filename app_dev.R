@@ -5,9 +5,9 @@ library(shinydashboard)
 library(tidyverse)
 
 #static datasets
-#go_data <- read.csv("./data/go_data.csv")
-#deltas <- read.csv("./data/deltas.csv")
-#background <- read.csv("./data/background.csv")
+go_data <- read.csv("./data/go_data.csv")
+deltas <- read.csv("./data/deltas.csv")
+background <- read.csv("./data/background.csv")
 demographics <- read.csv("./data/demographics.csv")
 
 
@@ -15,21 +15,15 @@ source('./functions/load_foreground_data.R')
 source('./functions/map_entry_to_index.R')
 
 #plotting functions
-#source('./functions/plotting/plot_driver.R')
-#source('./functions/plotting/format_boxplot_data.R')
-#source('./functions/plotting/make_boxplot_annotated.R')
-#source('./functions/plotting/make_boxplot_unannotated.R')
-#source('./functions/plotting/annotated_frame_generator.R')
-#source('./functions/plotting/annotate_row.R')
-#source('./functions/plotting/make_age_scatterplot.R')
-#source('./functions/plotting/make_BSC_scatterplot.R')
-#source('./functions/plotting/set_plot.R')
-
-#boxplot functions
-source('./functions/boxplot/boxplot_driver.R')
-source('./functions/boxplot/format_data.R')
-source('./functions/boxplot/make_boxplot_annotated.R')
-source('./functions/boxplot/make_boxplot_unannotated.R')
+source('./functions/plotting/plot_driver.R')
+source('./functions/plotting/format_boxplot_data.R')
+source('./functions/plotting/make_boxplot_annotated.R')
+source('./functions/plotting/make_boxplot_unannotated.R')
+source('./functions/plotting/annotated_frame_generator.R')
+source('./functions/plotting/annotate_row.R')
+source('./functions/plotting/make_age_scatterplot.R')
+source('./functions/plotting/make_bcs_scatterplot.R')
+source('./functions/plotting/set_plot.R')
 
 #gene ontology functions
 source('./functions/gene_ontology/go_processor.R')
@@ -68,13 +62,11 @@ ui <- dashboardPage(skin = "black",
                                      "cellular compartment",
                                      "molecular function"),
                                    selected = "biological process"),
-                      #radioButtons("plot_display", "Display Plot: ",
-                                   #c("Global Boxplot", "By Age", "By BSC"),
-                                   #selected = "Global Boxplot"),
-                      sliderInput("filter_by_age_slider", "Maximum age: ", value = 11, min = 1, max = 20),
-                      actionButton("filter_by_age_button", "Filter by Age"),
-                      sliderInput("filter_by_BSC_slider", "Maximum BSC: ", value = 10, min = 1, max = 10),
-                      actionButton("filter_by_BSC_button", "Filter by BSC"),
+                      radioButtons("plot_display", "Display Plot: ",
+                                   c("Global Boxplot", "By Age", "By BCS"),
+                                   selected = "Global Boxplot"),
+                      sliderInput("filter_by_age", "Maximum age: ", value = 11, min = 1, max = 100),
+                      sliderInput("filter_by_BCS", "Maximum BCS: ", value = 10, min = 1, max = 10),
                       actionButton("reset_background", "Reset Database")
                     ),
                     dashboardBody(
@@ -109,7 +101,7 @@ server <- function(input, output, session){
   })
   
   observeEvent(data(),{
-    Database$background <- data()
+    Database$backround <- data()
     Database$foreground <- generate_foreground(Database$background)
     Database$foreground_cache <- Database$foreground
     
@@ -127,34 +119,22 @@ server <- function(input, output, session){
   })
   
   #switches between what plot is currently shown
-  #observeEvent(input$plot_display,{
-    #Params$selected_plot <- input$plot_display
-    #Plot$current_plot <- set_plot(Plot$plots, plot_type = Params$selected_plot)
-  #})
+  observeEvent(input$plot_display,{
+    Params$selected_plot <- input$plot_display
+    Plot$current_plot <- set_plot(Plot$plots, plot_type = Params$selected_plot)
+  })
   
   #observers for filtering the background data
-  observeEvent(input$filter_by_age_button,{
-    print("check 1")
-
+  observeEvent(input$filter_by_age,{
     Database$background <- data() #reset the background
     Database$background <- filter_background(Database$background, demographics,
-                                             target = "Age", max_value = input$filter_by_age_slider)
-    Database$foreground <- generate_foreground(Database$background)
-    Database$foreground_cache_background_filtered <- Database$foreground
+                                             target = "Age", max_value = input$filter_by_age)
   })
   
-  observeEvent(input$filter_by_BSC_button,{
-    print("check 2")
+  observeEvent(input$filter_by_bcs,{
     Database$background <- data() #reset the background
     Database$background <- filter_background(Database$background, demographics,
-                                             target = "BSC", max_value = input$filter_by_BSC_slider)
-    Database$foreground <- generate_foreground(Database$background)
-    Database$foreground_cache_background_filtered <- Database$foreground
-  })
-  
-  observeEvent(input$reset_background,{
-    Database$background <- data()
-    Database$foreground <- Database$foreground_cache
+                                             target = "BCS", max_value = input$filter_by_bcs)
   })
   
   
@@ -164,8 +144,8 @@ server <- function(input, output, session){
     Database$current_entry <- map_entry_to_index(Database$foreground, index = input$display_rows_selected)
     Global$all_ontologies <- go_processor(entry = Database$current_entry, go_data)
     Database$ontology <- set_ontology(go_list = Global$all_ontologies, field = Params$go_field)
-    Plot$boxplot <- boxplot_driver(data = Database$background, entry = Database$current_entry, flag = Params$is_annotated)
-    #Plot$current_plot <- set_plot(plots = Plot$plots, plot_type = Params$selected_plot)
+    Plot$plots <- plot_driver(data = Database$background, entry = Database$current_entry, flag = Params$is_annotated,  demographics)
+    Plot$current_plot <- set_plot(plots = Plot$plots, plot_type = Params$selected_plot)
   })
   
   output$display <- DT::renderDataTable({
@@ -204,7 +184,7 @@ server <- function(input, output, session){
   #code for the filtering process
   observeEvent(input$filterButton,{
     if(Params$target_sample == "all" & Search$is_ongoing == FALSE){ 
-      Database$foreground <- Database$foreground_cache_background_filtered #reset to the entire dataset
+      Database$foreground <- Database$foreground_cache #reset to the entire dataset
     }
     else if(Params$target_sample == "all" & Search$is_ongoing == TRUE){
       Database$foreground <- Search$cache #reset to the cached search data
@@ -214,8 +194,8 @@ server <- function(input, output, session){
       Database$foreground <- filter_foreground(Search$cache, target = Params$target_sample)
     }
     else{
-      Database$foreground <- Database$foreground_cache_background_filtered
-      Database$foreground <- filter_foreground(Database$foreground, target = Params$target_sample)
+      Database$foreground <- Database$foreground_cache
+      Database$foreground <- filter_foreground(Database$dataset, target = Params$target_sample)
     }
   })
   
@@ -236,9 +216,12 @@ server <- function(input, output, session){
   
   #output for the plot
   output$show_plot <- renderPlot({
-    #req(input$display_rows_selected)
-    Plot$boxplot
+    req(input$display_rows_selected)
+    Plot$current_plot
   })
+  
+  
+ 
   
 }
 
