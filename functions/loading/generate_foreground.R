@@ -5,7 +5,6 @@ generate_foreground <- function(data){
 	names = c("Entry", "Protein", "Gene", "Urine", "Plasma", "Serum")
 	colnames(df) <- names
 
-       	
 	for(row in 1:nrow(data)){
 		r <- data[row,]
 		s <- r[,-1:-3] #removing the first three columns

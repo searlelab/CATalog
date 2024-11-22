@@ -1,81 +1,23 @@
-library(shiny)
-library(DT)
-library(ggplot2)
-library(shinydashboard)
-library(tidyverse)
-
-#static datasets
-#go_data <- read.csv("./data/go_data.csv")
-#deltas <- read.csv("./data/deltas.csv")
-#background <- read.csv("./data/background.csv")
-demographics <- read.csv("./data/demographics.csv")
-
-
-source('./functions/load_foreground_data.R')
-source('./functions/map_entry_to_index.R')
-
-#plotting functions
-#source('./functions/plotting/plot_driver.R')
-#source('./functions/plotting/format_boxplot_data.R')
-#source('./functions/plotting/make_boxplot_annotated.R')
-#source('./functions/plotting/make_boxplot_unannotated.R')
-#source('./functions/plotting/annotated_frame_generator.R')
-#source('./functions/plotting/annotate_row.R')
-#source('./functions/plotting/make_age_scatterplot.R')
-#source('./functions/plotting/make_BSC_scatterplot.R')
-#source('./functions/plotting/set_plot.R')
-
-#boxplot functions
-source('./functions/boxplot/boxplot_driver.R')
-source('./functions/boxplot/format_data.R')
-source('./functions/boxplot/make_boxplot_annotated.R')
-source('./functions/boxplot/make_boxplot_unannotated.R')
-
-#gene ontology functions
-source('./functions/gene_ontology/go_processor.R')
-source('./functions/gene_ontology/parse_cell.R')
-source('./functions/gene_ontology/set_ontology.R')
-source('./functions/gene_ontology/spoof_dataframe.R')
-
-#search-reated functions
-source('./functions/search/search_for_go_keyword.R')
-source('./functions/search/go_column_mapper.R')
-
-#filtering functions
-source('./functions/filters/filter_by_highest_biofluid.R')
-
-#unstable test functions
-source('./functions/test/filter_background.R')
-source('./functions/test/filter_foreground.R')
-source('./functions/test/generate_foreground.R')
-source('./functions/test/map_target_to_index.R')
-
-
+source('setup.R')
 
 ui <- dashboardPage(skin = "black",
                     dashboardHeader(title = tags$img(src='https://i.ibb.co/x6tH34j/logo4.png', height = '60', width = '120')),
                     dashboardSidebar(
                       textInput("keyword", "Filter proteins by GO: ", value = ""),
-                      actionButton("searchButton", "Search"),
-                      actionButton("resetButton", "reset"),
-                      selectInput("sampleType", "Filter by highest biofluid:",
-                                  choice = c("all", "urine", "serum", "plasma")),
-                      actionButton("filterButton", "Filter"),
+                      actionButton("search_button", "Search"),
+                      actionButton("reset_button", "reset"),
+                      selectInput("sample_type", "Filter by highest biofluid:",
+                                  choices = c("all", "urine", "serum", "plasma")),
+                      numericInput("age_filter", "Maximum Age", value = 11),
+                      numericInput("bsc_filter", "Maximum BSC", value = 10),
+                      actionButton("filter_button", "Filter"),
                       radioButtons("plot_labels", "Sample annotation: ",
                                    c("off", "on")),
                       radioButtons("go_item", "GO Data: ",
                                    c("biological process",
                                      "cellular compartment",
                                      "molecular function"),
-                                   selected = "biological process"),
-                      #radioButtons("plot_display", "Display Plot: ",
-                                   #c("Global Boxplot", "By Age", "By BSC"),
-                                   #selected = "Global Boxplot"),
-                      sliderInput("filter_by_age_slider", "Maximum age: ", value = 11, min = 1, max = 20),
-                      actionButton("filter_by_age_button", "Filter by Age"),
-                      sliderInput("filter_by_BSC_slider", "Maximum BSC: ", value = 10, min = 1, max = 10),
-                      actionButton("filter_by_BSC_button", "Filter by BSC"),
-                      actionButton("reset_background", "Reset Database")
+                                   selected = "biological process")
                     ),
                     dashboardBody(
                       fluidRow(
@@ -103,74 +45,26 @@ server <- function(input, output, session){
   
   Database$go_list = NULL
   
-  #new protocol for handling the data
   data <- reactive({
     read.csv("./data/protein_database.csv")
   })
   
   observeEvent(data(),{
     Database$background <- data()
+    Database$background_cache <- data()
     Database$foreground <- generate_foreground(Database$background)
     Database$foreground_cache <- Database$foreground
-    
   })
   
   #setting up the search parameters
   Search$cache <- NULL
   Search$is_ongoing <- FALSE
   
-  #connected to the GO field buttons
-  #the seemingly redundant code here is used to switch between GO categories for a given protein when clicking other buttons
   observeEvent(input$go_item,{
-    Params$go_field <- input$go_item
-    Database$ontology <- set_ontology(go_list = Global$all_ontologies, field = Params$go_field)
+    Database$ontology <- set_ontology(go_list = Global$all_ontologies, field = input$go_item)
   })
-  
-  #switches between what plot is currently shown
-  #observeEvent(input$plot_display,{
-    #Params$selected_plot <- input$plot_display
-    #Plot$current_plot <- set_plot(Plot$plots, plot_type = Params$selected_plot)
-  #})
-  
-  #observers for filtering the background data
-  observeEvent(input$filter_by_age_button,{
-    print("check 1")
-
-    Database$background <- data() #reset the background
-    Database$background <- filter_background(Database$background, demographics,
-                                             target = "Age", max_value = input$filter_by_age_slider)
-    Database$foreground <- generate_foreground(Database$background)
-    Database$foreground_cache_background_filtered <- Database$foreground
-  })
-  
-  observeEvent(input$filter_by_BSC_button,{
-    print("check 2")
-    Database$background <- data() #reset the background
-    Database$background <- filter_background(Database$background, demographics,
-                                             target = "BSC", max_value = input$filter_by_BSC_slider)
-    Database$foreground <- generate_foreground(Database$background)
-    Database$foreground_cache_background_filtered <- Database$foreground
-  })
-  
-  observeEvent(input$reset_background,{
-    Database$background <- data()
-    Database$foreground <- Database$foreground_cache
-  })
-  
-  
-  
-  #triggers when clicking on a row of the main display
-  observeEvent(input$display_rows_selected,{
-    Database$current_entry <- map_entry_to_index(Database$foreground, index = input$display_rows_selected)
-    Global$all_ontologies <- go_processor(entry = Database$current_entry, go_data)
-    Database$ontology <- set_ontology(go_list = Global$all_ontologies, field = Params$go_field)
-    Plot$boxplot <- boxplot_driver(data = Database$background, entry = Database$current_entry, flag = Params$is_annotated)
-    #Plot$current_plot <- set_plot(plots = Plot$plots, plot_type = Params$selected_plot)
-  })
-  
-  output$display <- DT::renderDataTable({
-    datatable(Database$foreground, selection = 'single')
-  })
+    
+  row_click_handler(input, trigger = "display_rows_selected", Database, Global, Plot, go_data)
   
   #GO result display
   output$results <- DT::renderDataTable({
@@ -178,60 +72,21 @@ server <- function(input, output, session){
     Database$ontology
   })
   
-  #triggers when pushing the search button
-  observeEvent(input$searchButton,{
-    Database$dataset <- Database$foreground_cache #reset the foreground data
-    index <- go_column_mapper(input$go_item) #need to figure out how to circumvent this function
-    search_results <- search_for_go_keyword(go_data, Database$foreground, go_field = index, keyword = input$keyword)
-    Database$foreground <- search_results #set the search results
-    Search$cache <- search_results #set the cache for the filtering process
-    Search$is_ongoing <- TRUE #state that we are currently searching
-  })
+  search_handler(input, trigger = "search_button", Database, Search)
   
-  #the search button is fundementally linked to the reset button
-  observeEvent(input$resetButton,{
-    Database$foreground <- Database$foreground_cache
-    updateTextInput(session,"keyword", value="")
-    Search$is_ongoing <- FALSE
-  })
-  
-  #code for the sample selector; determines what to filter by
-  observeEvent(input$sampleType,{
-    Params$target_sample <- input$sampleType
-  })
+  reset_handler(input, session, trigger = "reset_button", Database, Search)
   
   
-  #code for the filtering process
-  observeEvent(input$filterButton,{
-    if(Params$target_sample == "all" & Search$is_ongoing == FALSE){ 
-      Database$foreground <- Database$foreground_cache_background_filtered #reset to the entire dataset
-    }
-    else if(Params$target_sample == "all" & Search$is_ongoing == TRUE){
-      Database$foreground <- Search$cache #reset to the cached search data
-    }
-    
-    else if(Params$target_sample != "all" & Search$is_ongoing == TRUE){
-      Database$foreground <- filter_foreground(Search$cache, target = Params$target_sample)
-    }
-    else{
-      Database$foreground <- Database$foreground_cache_background_filtered
-      Database$foreground <- filter_foreground(Database$foreground, target = Params$target_sample)
-    }
+  filter_handler(input, trigger = "filter_button", Database, Search, demographics)
+  
+  output$display <- DT::renderDataTable({
+    datatable(Database$foreground, selection = 'single')
   })
   
-  #observer for the plot annotation
-  observeEvent(input$plot_labels,{
-    Params$is_annotated <- input$plot_labels
-    if(Params$is_annotated == "off"){
-      Params$demographics <- NULL
-    }
-    if(Params$is_annotated == "on"){
-      Params$demographics <- demographics
-    }
-  })
+  annotation_toggle(input, trigger = "plot_labels", Plot)
   
   output$demo <- renderTable({
-    Params$demographics
+    Plot$demographics
   })
   
   #output for the plot
