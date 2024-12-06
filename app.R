@@ -9,7 +9,7 @@ ui <- dashboardPage(skin = "black",
                       selectInput("sample_type", "Filter by highest biofluid:",
                                   choices = c("all", "urine", "serum", "plasma")),
                       numericInput("age_filter", "Maximum Age", value = 11),
-                      numericInput("bsc_filter", "Maximum BSC", value = 10),
+                      numericInput("bsc_filter", "Maximum BSC", value = 8),
                       actionButton("filter_button", "Filter"),
                       radioButtons("plot_labels", "Sample annotation: ",
                                    c("off", "on")),
@@ -83,7 +83,7 @@ server <- function(input, output, session){
     datatable(Database$foreground, selection = 'single')
   })
   
-  annotation_toggle(input, trigger = "plot_labels", Plot)
+  annotation_toggle(input, trigger = "plot_labels", Plot, Database)
   
   output$demo <- renderTable({
     Plot$demographics
@@ -94,6 +94,10 @@ server <- function(input, output, session){
     #req(input$display_rows_selected)
     Plot$boxplot
   })
+  
+  #logic to show alerts for entering illegal values in the demographic filter boxes
+  demographic_filter_alert(input, button_id = "age_filter", min = 1, max = 11)
+  demographic_filter_alert(input, button_id = "bsc_filter", min = 1, max = 8)
   
 }
 

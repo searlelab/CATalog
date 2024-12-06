@@ -4,6 +4,7 @@ library(DT)
 library(ggplot2)
 library(shinydashboard)
 library(tidyverse)
+library(shinyalert)
 
 #static datasets
 go_data <- read.csv("./data/go_data.csv")
@@ -21,6 +22,7 @@ source('./functions/boxplot/boxplot_driver.R')
 source('./functions/boxplot/format_data.R')
 source('./functions/boxplot/make_boxplot_annotated.R')
 source('./functions/boxplot/make_boxplot_unannotated.R')
+source('./functions/boxplot/make_boxplot.R')
 
 #gene ontology functions
 source('./functions/gene_ontology/go_processor.R')
@@ -44,4 +46,5 @@ source('./components/filter_handler.R')
 source('./components/reset_handler.R')
 source('./components/row_click_handler.R')
 source('./components/search_handler.R')
+source('./components/demographic_filter_alert.R')
 

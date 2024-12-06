@@ -15,6 +15,7 @@ format_data <- function(data, entry){
 	df <- data.frame(values, biofluid, labels)
 
 	output <- list(name, df)
+	print("data formatted sucessfully")
 	output
 }
 
