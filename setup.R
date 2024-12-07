@@ -40,6 +40,13 @@ source('./functions/filters/filter_background.R')
 source('./functions/filters/filter_background_by_cache.R')
 source('./functions/filters/filter_foreground.R')
 
+#shopping cart functions
+source('./functions/shopping_cart/add_multiple_rows_to_cart.R')
+source('./functions/shopping_cart/add_row_to_cart.R')
+source('./functions/shopping_cart/create_empty_dataframe.R')
+source('./functions/shopping_cart/remove_row_from_cart.R')
+source('./functions/shopping_cart/get_selected_rows.R')
+
 #components
 source('./components/annotation_toggle.R')
 source('./components/filter_handler.R')
@@ -47,4 +54,7 @@ source('./components/reset_handler.R')
 source('./components/row_click_handler.R')
 source('./components/search_handler.R')
 source('./components/demographic_filter_alert.R')
+source('./components/add_protein_to_cart.R')
+source('./components/remove_protein_from_cart.R')
+source('./components/shopping_cart_row_select_logic.R')
 
