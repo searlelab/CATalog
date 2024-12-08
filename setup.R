@@ -5,6 +5,7 @@ library(ggplot2)
 library(shinydashboard)
 library(tidyverse)
 library(shinyalert)
+library(shinyjs)
 
 #static datasets
 go_data <- read.csv("./data/go_data.csv")

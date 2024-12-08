@@ -5,6 +5,7 @@ core_database <- read.csv("./data/protein_database.csv")
 ui <- dashboardPage(skin = "black",
                     dashboardHeader(title = tags$img(src='https://i.ibb.co/x6tH34j/logo4.png', height = '60', width = '120')),
                     dashboardSidebar(
+                      useShinyjs(),
                       textInput("keyword", "Filter proteins by GO: ", value = ""),
                       actionButton("search_button", "Search"),
                       actionButton("reset_button", "reset"),
@@ -22,9 +23,23 @@ ui <- dashboardPage(skin = "black",
                                    selected = "biological process"),
                       actionButton("add_protein_button", "Add protein to cart"),
                       actionButton("toggle_protein_cart", "Show protein shopping cart"),
-                      actionButton("test_button", "Test")
+                      downloadButton("download", "Download Shopping Cart",
+                                     style = "width: 100%; margin-top: 10px;")
+                      
                     ),
                     dashboardBody(
+                      tags$head(
+                        tags$style(HTML(
+                          "
+                          #download{
+                            color: black !important;
+                            background-color: #ffffff;
+                            border: 1px solid #cccccc;
+                            font-weight: bold;
+                          }
+                          "
+                        ))
+                      ),
                       tags$script(HTML(
                         "
                         $(document).on('change', 'input.checkbox', function(){
@@ -158,9 +173,15 @@ server <- function(input, output, session){
     ))
   })
   
-  observeEvent("test_button",{
-    print(input$checked_rows)
-  })
+  output$download <- downloadHandler(
+    filename = function(){
+      paste("my_data-", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file){
+      data <- ShoppingCart$data
+      write.csv(data, file, row.names = FALSE)
+    }
+  )
   
   
 }
