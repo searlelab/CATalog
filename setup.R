@@ -40,6 +40,7 @@ source('./functions/filters/apply_demographic_filter.R')
 source('./functions/filters/filter_background.R')
 source('./functions/filters/filter_background_by_cache.R')
 source('./functions/filters/filter_foreground.R')
+source('./functions/filters/update_demographics.R')
 
 #shopping cart functions
 source('./functions/shopping_cart/add_multiple_rows_to_cart.R')

@@ -85,11 +85,11 @@ server <- function(input, output, session){
     Database$background <- data()
     Database$background_cache <- data()
     Database$foreground <- generate_foreground(Database$background)
-    Database$foreground$check <- sprintf("<input type='checkbox' class='checkbox' id='checkbox_%s'>", core_database$Entry)
+    #Database$foreground$check <- sprintf("<input type='checkbox' class='checkbox' id='checkbox_%s'>", core_database$Entry)
     Database$foreground_cache <- Database$foreground
     ShoppingCart$data <- create_empty_dataframe(Database$foreground)
+    Global$demographics <- demographics
   })
-  
   
   #setting up the search parameters
   Search$cache <- NULL
@@ -112,19 +112,31 @@ server <- function(input, output, session){
   reset_handler(input, session, trigger = "reset_button", Database, Search)
   
   
-  filter_handler(input, trigger = "filter_button", Database, Search, demographics)
+  filter_handler(input, trigger = "filter_button", Database, Search, Global, Plot, demographics)
   
   output$display <- DT::renderDataTable({
-    datatable(Database$foreground, 
+    data_with_check <- Database$foreground
+    data_with_check$Check <- sprintf(
+      "<input type='checkbox' class='checkbox' id='checkbox_%s' />",
+      data_with_check$Entry
+    )
+    data_with_check <- data_with_check[, c("Check", setdiff(names(data_with_check), "Check"))]
+    
+    datatable(data_with_check, 
               selection = 'single',
               escape = FALSE,
-              options = list(dom = 't', paging = FALSE))
+              options = list(dom = 'Bfrtip',
+                             pageLength = 10,
+                             autoWidth = FALSE,
+                             searching = TRUE,
+                             paging = TRUE
+                             ), class = 'cell-border stripe hover nowrap')
   }, server = FALSE)
   
   annotation_toggle(input, trigger = "plot_labels", Plot, Database)
   
   output$demo <- renderTable({
-    Plot$demographics
+    Global$demographics
   })
   
   #output for the plot

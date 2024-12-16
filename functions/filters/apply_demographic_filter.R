@@ -1,13 +1,18 @@
-apply_demographic_filter <- function(background, demographics, max_age, max_bsc){
-	if(max_age < 11 ){
-		background <- filter_background(background, demographics, target = "Age", max_value = max_age)
-		print("Age filter passed")
+apply_demographic_filter <- function(background, demographics, target, value, max_value){
+	print("attempting to apply demographic filter")
+	#preliminary requirements
+	if(!is.null(value) && is.numeric(value)){
+		  print("conditions met, executing filter")
+		  if(value > 0 && value <= max_value){
+			print("conditions met, applying filter")
+		  	background <- filter_background(background, demographics, target, value)
+		  }
+		  
 	}
-	if(max_bsc < 10){
-		background <- filter_background(background, demographics, target = "BSC", max_value = max_bsc)
-		print("BSC filter passed")
+	else{
+	     print("did not apply filter")
 	}
-	background
+	return(background)
 }
-
+		 		 
 
