@@ -21,8 +21,6 @@ source('./functions/mapping/map_target_to_index.R')
 #boxplot functions
 source('./functions/boxplot/boxplot_driver.R')
 source('./functions/boxplot/format_data.R')
-source('./functions/boxplot/make_boxplot_annotated.R')
-source('./functions/boxplot/make_boxplot_unannotated.R')
 source('./functions/boxplot/make_boxplot.R')
 
 #gene ontology functions
