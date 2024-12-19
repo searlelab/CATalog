@@ -1,10 +1,10 @@
 filter_background <- function(data, demographics, target, value){
-	print("filtering the background")
+	#print("filtering the background")
 	#print(target)
 	r <- demographics%>%
 		filter(Cat == target)
 	#print(head(r))
-	print("check 1")
+	#print("check 1")
 	r <- data.frame(t(r[-1]))
 	#print(head(r))
 	#print("check 1.1")

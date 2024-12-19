@@ -1,10 +1,24 @@
-search_handler <- function(input, trigger, Database, Search){
+search_handler <- function(input, session, trigger, Database, Search){
+	#add in more error checks here to ensure that only one type of search can be executed at a time
 	observeEvent(input[[trigger]],{
-			     Database$foreground <- Database$foreground_cache
-			     index <- go_column_mapper(input$go_item)
-			     search_results <- search_for_go_keyword(go_data, Database$foreground, keyword = input$keyword)
-			     Database$foreground <- search_results
-			     Search$cache <- search_results
-			     Search$is_ongoing <- TRUE
+			     if(input$go_search_query != ""){
+			     	#print("executing GO search")
+			     	updateTextInput(session,"protein_search_query", value="")
+			     	Database$foreground <- Database$foreground_cache
+			     	search_results <- search_for_go_keyword(go_data, Database$foreground, keyword = input$go_search_query)
+			     	Database$foreground <- search_results
+			     	Search$cache <- search_results
+			     	Search$is_ongoing <- TRUE
+			     }
+			     if(input$protein_search_query != ""){
+				#print("executing protein search")
+			     	#print(input$search_field)
+			     	updateTextInput(session,"go_search_query", value="")
+			     	Database$foreground <- Database$foreground_cache
+				search_results <- search_for_protein(Database$foreground, field = input$search_field, keyword = input$protein_search_query)
+				Database$foreground <- search_results
+				Search$cache <- search_results
+				Search$is_ongoing <- TRUE
+			     }
 	})
 }

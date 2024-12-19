@@ -31,7 +31,8 @@ source('./functions/gene_ontology/spoof_dataframe.R')
 
 #search-reated functions
 source('./functions/search/search_for_go_keyword.R')
-source('./functions/search/go_column_mapper.R')
+source('./functions/search/search_for_protein.R')
+#source('./functions/search/go_column_mapper.R')
 
 #filtering functions
 source('./functions/filters/apply_demographic_filter.R')
@@ -39,6 +40,7 @@ source('./functions/filters/filter_background.R')
 source('./functions/filters/filter_background_by_cache.R')
 source('./functions/filters/filter_foreground.R')
 source('./functions/filters/update_demographics.R')
+source('./functions/filters/merge_primary_search.R')
 
 #shopping cart functions
 source('./functions/shopping_cart/add_multiple_rows_to_cart.R')
@@ -57,4 +59,6 @@ source('./components/demographic_filter_alert.R')
 source('./components/add_protein_to_cart.R')
 source('./components/remove_protein_from_cart.R')
 source('./components/shopping_cart_row_select_logic.R')
+source('./components/render_display_table.R')
+source('./components/toggle_go_data_type.R')
 

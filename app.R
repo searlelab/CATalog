@@ -6,7 +6,12 @@ ui <- dashboardPage(skin = "black",
                     dashboardHeader(title = tags$img(src='https://i.ibb.co/x6tH34j/logo4.png', height = '60', width = '120')),
                     dashboardSidebar(
                       useShinyjs(),
-                      textInput("keyword", "Filter proteins by GO: ", value = ""),
+                      textInput("go_search_query", "Search proteins by GO term: ", value = ""),
+                      textInput("protein_search_query", "Search protein by field", value = ""),
+                      radioButtons("search_field", "Search Field: ",
+                                   c("Protein name",
+                                     "Gene name",
+                                     "Entry")),
                       actionButton("search_button", "Search"),
                       actionButton("reset_button", "reset"),
                       selectInput("sample_type", "Filter by highest biofluid:",
@@ -16,7 +21,7 @@ ui <- dashboardPage(skin = "black",
                       actionButton("filter_button", "Filter"),
                       radioButtons("plot_labels", "Sample annotation: ",
                                    c("off", "on")),
-                      radioButtons("go_item", "GO Data: ",
+                      radioButtons("go_data_type", "GO Data: ",
                                    c("biological process",
                                      "cellular compartment",
                                      "molecular function"),
@@ -40,22 +45,21 @@ ui <- dashboardPage(skin = "black",
                           "
                         ))
                       ),
-                      tags$script(HTML(
-                        "
-                        $(document).on('change', 'input.checkbox', function(){
+                      tags$script(HTML('
+    
+                        $(document).on("change", "input.checkbox", function() {
                           var selected = [];
-                          $('input.checkbox:checked').each(function(){
-                            selected.push($(this).attr('id').replace('checkbox_',''));
+                          $("input.checkbox:checked").each(function() {
+                            selected.push($(this).attr("id").replace("checkbox_", ""));
                           });
-                          Shiny.setInputValue('checked_rows',selected);
+                          Shiny.setInputValue("checked_rows", selected);
                         });
-                        "
-                      )),
+                      ')),
                       fluidRow(
                         column(width = 8,
                                box(width = NULL, DT::dataTableOutput("display"), 
                                    style = "height:400px; overflow-y: scroll; overflow-x: scroll;"),
-                               box(width = NULL, DT::dataTableOutput("results"),
+                               box(width = NULL, DT::dataTableOutput("go_information"),
                                    style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
                         ),
                         column(width = 4,
@@ -95,43 +99,58 @@ server <- function(input, output, session){
   Search$cache <- NULL
   Search$is_ongoing <- FALSE
   
-  observeEvent(input$go_item,{
-    Database$ontology <- set_ontology(go_list = Global$all_ontologies, field = input$go_item)
-  })
+  Database$primary_search_is_ongoing <- FALSE
+  
+  toggle_go_data_type(input, trigger = "go_data_type", Database)
     
-  row_click_handler(input, trigger = "display_rows_selected", Database, Global, Plot, go_data)
+  row_click_handler(input, trigger = "display_rows_selected", Database, Plot, go_data)
   
   #GO result display
-  output$results <- DT::renderDataTable({
+  output$go_information <- DT::renderDataTable({
     req(input$display_rows_selected)
-    Database$ontology
+    Database$go_table
   })
   
-  search_handler(input, trigger = "search_button", Database, Search)
+  search_handler(input, session, trigger = "search_button", Database, Search)
   
   reset_handler(input, session, trigger = "reset_button", Database, Search)
   
   
-  filter_handler(input, trigger = "filter_button", Database, Search, Global, Plot, demographics)
+  filter_handler(input, trigger = "filter_button", Database, Search, Global, Plot, demographics, output,session)
   
-  output$display <- DT::renderDataTable({
-    data_with_check <- Database$foreground
-    data_with_check$Check <- sprintf(
-      "<input type='checkbox' class='checkbox' id='checkbox_%s' />",
-      data_with_check$Entry
-    )
-    data_with_check <- data_with_check[, c("Check", setdiff(names(data_with_check), "Check"))]
-    
-    datatable(data_with_check, 
-              selection = 'single',
-              escape = FALSE,
-              options = list(dom = 'Bfrtip',
-                             pageLength = 10,
-                             autoWidth = FALSE,
-                             searching = TRUE,
-                             paging = TRUE
-                             ), class = 'cell-border stripe hover nowrap')
-  }, server = FALSE)
+  #observe({
+    # When search cache is empty or null, initialize the display table
+    #if(is.null(Database$primary_search_cache) || Database$primary_search_cache == ""){
+      #render_display_table(output, table_id = "display", Database, search_cache = "", session)
+    #}
+  #})
+  
+  render_display_table(output, table_id = "display", Database)
+  
+  #new functionality for the above search
+  #observeEvent(input$display_search,{
+    #search_input <- input$display_search
+    #Database$primary_search_cache <- search_input #capturing the search query
+    #if(search_input != "" && length(input$display_rows_all) > 0){
+      #Database$primary_search_is_ongoing <- TRUE
+      #Database$primary_search_cache_backgr <- Database$background[input$display_rows_all,]
+
+    #}
+    #else if(search_input == ""){
+      #Database$primary_search_is_ongoing <- FALSE
+    #}
+  #})
+  
+  #observer to look for when the table is updated
+  #observe({
+    #cached_search <- Database$primary_search_input
+    #if(cached_search != ""){
+      #session$sendCustomMessage(type = "restoreSearch", message = cached_search)
+      #print(paste("Restoring Search Input: ", cached_search))
+    #}
+  #})
+  
+  shinyjs::extendShinyjs(script = NULL, functions = c())
   
   annotation_toggle(input, trigger = "plot_labels", Plot, Database)
   
