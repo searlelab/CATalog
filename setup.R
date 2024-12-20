@@ -20,6 +20,7 @@ source('./functions/loading/generate_foreground.R')
 print("loading mapping functions")
 source('./functions/mapping/map_entry_to_index.R')
 source('./functions/mapping/map_target_to_index.R')
+source('./functions/mapping/map_protein_index_to_name.R')
 
 #boxplot functions
 print("loading plotting functions")

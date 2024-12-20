@@ -1,6 +1,7 @@
-shopping_cart_row_click_handler <- function(input, trigger, table_reactive){
+shopping_cart_row_click_handler <- function(input, trigger, ShoppingCart){
 	observeEvent(input[[trigger]],{
-			     table_reactive$current_peptide_name <- map_peptide_index_to_name(table_reactive$data, input$peptide_cart_display_rows_selected)
+			     ShoppingCart$current_protein_name <- map_protein_index_to_name(ShoppingCart$data, input$protein_cart_main_display_rows_selected)
+			     #print(ShoppingCart$current_protein_name)
 	})
 }
 

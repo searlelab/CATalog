@@ -140,22 +140,8 @@ server <- function(input, output, session){
   #stuff involving the shopping cart
   add_protein_to_shopping_cart_handler(input, "add_protein_button", ShoppingCart, Database$foreground)
   remove_protein_from_shopping_cart_handler(input, "delete_selected", ShoppingCart)
-  shopping_cart_row_click_handler(input, "protein_Cart_main_display_rows_selected")
+  shopping_cart_row_click_handler(input, "protein_cart_main_display_rows_selected", ShoppingCart)
   
-  
-  
-  #defines the shopping cart table appearance
-  #output$protein_cart_main_display <- DT::renderDataTable({
-    #datatable(ShoppingCart$data,
-              #selection = "single",
-              #options = list(
-                #scrollX = TRUE,
-                #autoWidth = TRUE,
-                #pageLength = 10
-              #),
-              #class = 'main_display nowrap'
-              #)
-  #})
   
   protein_cart_main_display_backend(output, ShoppingCart)
   

@@ -1,7 +1,7 @@
-remove_protein_from_shopping_cart_handler <- function(input, button_id, table_reactive){
-	observeEvent(input[[button_id]],{
-			     req(input$peptide_cart_display_rows_selected)
-			     table_reactive$data <- remove_row_from_cart(table_reactive$data, input$peptide_cart_display_rows_selected)
-			     shinyalert(print(paste("Removed: ", table_reactive$current_peptide_name, " from cart")))
+remove_protein_from_shopping_cart_handler <- function(input, trigger, ShoppingCart){
+	observeEvent(input[[trigger]],{
+			     req(input$protein_cart_main_display_rows_selected)
+			     ShoppingCart$data <- remove_row_from_cart(ShoppingCart$data, input$protein_cart_main_display_rows_selected)
+			     shinyalert(print(paste("Removed: ", ShoppingCart$current_protein_name, " from cart")))
 	})
 }
