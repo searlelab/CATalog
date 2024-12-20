@@ -1,4 +1,4 @@
-remove_protein_from_cart <- function(input, button_id, table_reactive){
+remove_protein_from_shopping_cart_handler <- function(input, button_id, table_reactive){
 	observeEvent(input[[button_id]],{
 			     req(input$peptide_cart_display_rows_selected)
 			     table_reactive$data <- remove_row_from_cart(table_reactive$data, input$peptide_cart_display_rows_selected)

@@ -57,7 +57,7 @@ ui <- dashboardPage(skin = "black",
                       ')),
                       fluidRow(
                         column(width = 8,
-                               box(width = NULL, DT::dataTableOutput("display"), 
+                               box(width = NULL, DT::dataTableOutput("main_display"), 
                                    style = "height:400px; overflow-y: scroll; overflow-x: scroll;"),
                                box(width = NULL, DT::dataTableOutput("go_information"),
                                    style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
@@ -103,56 +103,25 @@ server <- function(input, output, session){
   
   toggle_go_data_type(input, trigger = "go_data_type", Database)
     
-  row_click_handler(input, trigger = "display_rows_selected", Database, Plot, go_data)
+  main_display_row_click_handler(input, trigger = "main_display_rows_selected", Database, Plot, go_data)
   
-  #GO result display
+  #GO result main_display
   output$go_information <- DT::renderDataTable({
-    req(input$display_rows_selected)
+    req(input$main_display_rows_selected)
     Database$go_table
   })
   
-  search_handler(input, session, trigger = "search_button", Database, Search)
+  search_button_logic(input, session, trigger = "search_button", Database, Search)
   
-  reset_handler(input, session, trigger = "reset_button", Database, Search)
+  reset_button_logic(input, session, trigger = "reset_button", Database, Search)
   
+  filter_button_logic(input, trigger = "filter_button", Database, Search, Global, Plot, demographics, output,session)
   
-  filter_handler(input, trigger = "filter_button", Database, Search, Global, Plot, demographics, output,session)
-  
-  #observe({
-    # When search cache is empty or null, initialize the display table
-    #if(is.null(Database$primary_search_cache) || Database$primary_search_cache == ""){
-      #render_display_table(output, table_id = "display", Database, search_cache = "", session)
-    #}
-  #})
-  
-  render_display_table(output, table_id = "display", Database)
-  
-  #new functionality for the above search
-  #observeEvent(input$display_search,{
-    #search_input <- input$display_search
-    #Database$primary_search_cache <- search_input #capturing the search query
-    #if(search_input != "" && length(input$display_rows_all) > 0){
-      #Database$primary_search_is_ongoing <- TRUE
-      #Database$primary_search_cache_backgr <- Database$background[input$display_rows_all,]
-
-    #}
-    #else if(search_input == ""){
-      #Database$primary_search_is_ongoing <- FALSE
-    #}
-  #})
-  
-  #observer to look for when the table is updated
-  #observe({
-    #cached_search <- Database$primary_search_input
-    #if(cached_search != ""){
-      #session$sendCustomMessage(type = "restoreSearch", message = cached_search)
-      #print(paste("Restoring Search Input: ", cached_search))
-    #}
-  #})
+  render_main_display_table(output, table_id = "main_display", Database)
   
   shinyjs::extendShinyjs(script = NULL, functions = c())
   
-  annotation_toggle(input, trigger = "plot_labels", Plot, Database)
+  toggle_annotations(input, trigger = "plot_labels", Plot, Database)
   
   output$demo <- renderTable({
     Global$demographics
@@ -160,40 +129,42 @@ server <- function(input, output, session){
   
   #output for the plot
   output$show_plot <- renderPlot({
-    #req(input$display_rows_selected)
+    #req(input$main_display_rows_selected)
     Plot$boxplot
   })
   
   #logic to show alerts for entering illegal values in the demographic filter boxes
-  demographic_filter_alert(input, button_id = "age_filter", min = 1, max = 11)
-  demographic_filter_alert(input, button_id = "bsc_filter", min = 1, max = 8)
+  invalid_demographic_value_error_handler(input, button_id = "age_filter", min = 1, max = 11)
+  invalid_demographic_value_error_handler(input, button_id = "bsc_filter", min = 1, max = 8)
   
   #stuff involving the shopping cart
-  add_protein_to_cart(input, "add_protein_button", ShoppingCart, Database$foreground)
-  remove_protein_from_cart(input, "delete_selected", ShoppingCart)
-  shopping_cart_row_select_logic(input, "protein_Cart_display_rows_selected")
+  add_protein_to_shopping_cart_handler(input, "add_protein_button", ShoppingCart, Database$foreground)
+  remove_protein_from_shopping_cart_handler(input, "delete_selected", ShoppingCart)
+  shopping_cart_row_click_handler(input, "protein_Cart_main_display_rows_selected")
   
   
   
   #defines the shopping cart table appearance
-  output$protein_cart_display <- DT::renderDataTable({
-    datatable(ShoppingCart$data,
-              selection = "single",
-              options = list(
-                scrollX = TRUE,
-                autoWidth = TRUE,
-                pageLength = 10
-              ),
-              class = 'display nowrap'
-              )
-  })
+  #output$protein_cart_main_display <- DT::renderDataTable({
+    #datatable(ShoppingCart$data,
+              #selection = "single",
+              #options = list(
+                #scrollX = TRUE,
+                #autoWidth = TRUE,
+                #pageLength = 10
+              #),
+              #class = 'main_display nowrap'
+              #)
+  #})
   
-  #logic for the modal portion of the cart display
-  observeEvent(input$toggle_protein_cart,{ #modal display
+  protein_cart_main_display_backend(output, ShoppingCart)
+  
+  #logic for the modal portion of the cart main_display
+  observeEvent(input$toggle_protein_cart,{ #modal main_display
     showModal(modalDialog(
       title = "Protein Cart",
       tags$div(
-        DTOutput("protein_cart_display"),
+        DTOutput("protein_cart_main_display"),
         style = "overflow-x: auto; width: 100%;"
       ),
       

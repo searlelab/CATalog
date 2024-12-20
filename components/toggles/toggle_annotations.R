@@ -1,4 +1,4 @@
-annotation_toggle <- function(input, trigger, Plot, Database){
+toggle_annotations <- function(input, trigger, Plot, Database){
 	observeEvent(input[[trigger]],{
 		#print("triggered the annotation toggle")
 		#print(head(Global$demographics))

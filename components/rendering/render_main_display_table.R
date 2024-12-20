@@ -1,4 +1,4 @@
-render_display_table <- function(output, table_id, Database){
+render_main_display_table <- function(output, table_id, Database){
 	output[[table_id]] <- DT::renderDataTable({
     		data_with_check <- Database$foreground
     		data_with_check$Check <- sprintf(
@@ -18,8 +18,4 @@ render_display_table <- function(output, table_id, Database){
                                    ), class = 'cell-border stripe hover nowrap')
   		}, server = FALSE)
 
-	#if(!is.null(search_cache) && search_cache != ""){
-		#print("sending custom message")
-		#session$sendCustomMessage(type = "restoreSearch", message = search_cache)
-	#}
 }

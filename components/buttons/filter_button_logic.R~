@@ -1,4 +1,4 @@
-filter_handler <- function(input, trigger, Database, Search, Global, Plot, demographics, output, session){
+filter_button_logic <- function(input, trigger, Database, Search, Global, Plot, demographics, output, session){
 	observeEvent(input[[trigger]],{
     		Database$background <- Database$background_cache
 		print(paste("primary search status: ", Database$primary_search_is_ongoing))

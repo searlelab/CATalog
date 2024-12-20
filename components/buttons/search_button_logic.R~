@@ -1,4 +1,4 @@
-search_handler <- function(input, session, trigger, Database, Search){
+search_button_logic <- function(input, session, trigger, Database, Search){
 	#add in more error checks here to ensure that only one type of search can be executed at a time
 	observeEvent(input[[trigger]],{
 			     if(input$go_search_query != ""){

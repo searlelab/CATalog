@@ -1,4 +1,4 @@
-reset_handler <- function(input, session, trigger, Database, Search){
+reset_button_logic <- function(input, session, trigger, Database, Search){
 	observeEvent(input[[trigger]],{
 			      Database$background <- Database$background_cache
     			      Database$foreground <- Database$foreground_cache
