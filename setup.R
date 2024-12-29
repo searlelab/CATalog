@@ -15,6 +15,7 @@ demographics <- read.csv("./data/demographics.csv")
 #loading functions
 print("loading setup functions")
 source('./functions/loading/generate_foreground.R')
+source('./functions/plot_junction.R')
 
 #mapping_functions
 print("loading mapping functions")
@@ -23,10 +24,17 @@ source('./functions/mapping/map_target_to_index.R')
 source('./functions/mapping/map_protein_index_to_name.R')
 
 #boxplot functions
-print("loading plotting functions")
+print("loading boxplot functions")
 source('./functions/boxplot/boxplot_driver.R')
 source('./functions/boxplot/format_data.R')
 source('./functions/boxplot/make_boxplot.R')
+
+#scatterplot functions
+print("loading scatterplot functions")
+source('./functions/scatterplot/format_demographics.R')
+source('./functions/scatterplot/format_subframe.R')
+source('./functions/scatterplot/make_scatterplot.R')
+source('./functions/scatterplot/scatterplot_driver.R')
 
 #gene ontology functions
 print("loading GO functions")
@@ -74,6 +82,7 @@ source('./components/buttons/reset_button_logic.R')
 print("loading toggle components")
 source('./components/toggles/toggle_annotations.R')
 source('./components/toggles/toggle_go_data_type.R')
+source('./components/toggles/toggle_plot_type.R')
 
 #event handlers
 print("loading event handlers")

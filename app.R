@@ -26,6 +26,9 @@ ui <- dashboardPage(skin = "black",
                                      "cellular compartment",
                                      "molecular function"),
                                    selected = "biological process"),
+                      radioButtons("plot_type", "Plot Type: ",
+                                   c("boxplot",
+                                     "scatterplot")),
                       actionButton("add_protein_button", "Add protein to cart"),
                       actionButton("toggle_protein_cart", "Show protein shopping cart"),
                       downloadButton("download", "Download Shopping Cart",
@@ -102,8 +105,9 @@ server <- function(input, output, session){
   Database$primary_search_is_ongoing <- FALSE
   
   toggle_go_data_type(input, trigger = "go_data_type", Database)
+  toggle_plot_type(input, trigger = "plot_type", Plot)
     
-  main_display_row_click_handler(input, trigger = "main_display_rows_selected", Database, Plot, go_data)
+  main_display_row_click_handler(input, trigger = "main_display_rows_selected", Database, Plot, Global, go_data)
   
   #GO result main_display
   output$go_information <- DT::renderDataTable({
@@ -130,7 +134,7 @@ server <- function(input, output, session){
   #output for the plot
   output$show_plot <- renderPlot({
     #req(input$main_display_rows_selected)
-    Plot$boxplot
+    Plot$current_plot
   })
   
   #logic to show alerts for entering illegal values in the demographic filter boxes
