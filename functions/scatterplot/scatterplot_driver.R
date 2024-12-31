@@ -25,7 +25,7 @@ scatterplot_driver<- function(Database, Global){
 	}
 	#print("check 7")
 	#make the scatterplot from the list of processed subframes
-	plot <- make_scatterplot(processed_frames)
+	plot <- make_scatterplot(processed_frames, name = Database$current_name)
 	#print("check 8")
 	return(plot)
 }
