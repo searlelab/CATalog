@@ -30,6 +30,7 @@ ui <- dashboardPage(skin = "black",
                                    c("boxplot",
                                      "scatterplot")),
                       actionButton("add_protein_button", "Add protein to cart"),
+                      actionButton("export_go_data_button", "Export GO data to cart"),
                       actionButton("toggle_protein_cart", "Show protein shopping cart"),
                       downloadButton("download", "Download Shopping Cart",
                                      style = "width: 100%; margin-top: 10px;")
@@ -143,10 +144,11 @@ server <- function(input, output, session){
   
   #stuff involving the shopping cart
   add_protein_to_shopping_cart_handler(input, "add_protein_button", ShoppingCart, Database$foreground)
+  add_go_info_to_shopping_cart_handler(input, "export_go_data_button", Database, ShoppingCart, go_data)
   remove_protein_from_shopping_cart_handler(input, "delete_selected", ShoppingCart)
   shopping_cart_row_click_handler(input, "protein_cart_main_display_rows_selected", ShoppingCart)
   
-  
+  toggle_cart_type(input, "cart_type", ShoppingCart)
   protein_cart_main_display_backend(output, ShoppingCart)
   
   #logic for the modal portion of the cart main_display
@@ -159,6 +161,7 @@ server <- function(input, output, session){
       ),
       
       actionButton("delete_selected", "Delete Selected Rows"),
+      radioButtons("cart_type", "Show shopping cart as: ", choices = c("proteins", "go data")),
       easyClose = TRUE,
       footer = modalButton("Close"),
       style = "width: 90%; max-width: 2000px;"

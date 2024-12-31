@@ -16,12 +16,13 @@ demographics <- read.csv("./data/demographics.csv")
 print("loading setup functions")
 source('./functions/loading/generate_foreground.R')
 source('./functions/plot_junction.R')
+source('./functions/cart_junction.R')
 
 #mapping_functions
 print("loading mapping functions")
-source('./functions/mapping/map_entry_to_index.R')
+source('./functions/mapping/map_index_to_entry.R')
 source('./functions/mapping/map_target_to_index.R')
-source('./functions/mapping/map_protein_index_to_name.R')
+source('./functions/mapping/map_index_to_name.R')
 
 #boxplot functions
 print("loading boxplot functions")
@@ -42,6 +43,8 @@ source('./functions/gene_ontology/go_processor.R')
 source('./functions/gene_ontology/parse_cell.R')
 source('./functions/gene_ontology/set_ontology.R')
 source('./functions/gene_ontology/spoof_dataframe.R')
+source('./functions/gene_ontology/combine_go_dataframes.R')
+source('./functions/gene_ontology/inject_go_types.R')
 
 #search-reated functions
 print("loading search functions")
@@ -83,6 +86,7 @@ print("loading toggle components")
 source('./components/toggles/toggle_annotations.R')
 source('./components/toggles/toggle_go_data_type.R')
 source('./components/toggles/toggle_plot_type.R')
+source('./components/toggles/toggle_cart_type.R')
 
 #event handlers
 print("loading event handlers")
@@ -90,6 +94,7 @@ source('./components/event_handlers/add_protein_to_shopping_cart_handler.R')
 source('./components/event_handlers/main_display_row_click_handler.R')
 source('./components/event_handlers/remove_protein_from_shopping_cart_handler.R')
 source('./components/event_handlers/shopping_cart_row_click_handler.R')
+source('./components/event_handlers/add_go_info_to_shopping_cart_handler.R')
 
 #error handlers
 print("loading error handlers")
