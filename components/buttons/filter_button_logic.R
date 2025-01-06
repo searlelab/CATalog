@@ -1,9 +1,9 @@
 filter_button_logic <- function(input, trigger, Database, Search, Global, Plot, demographics, output, session){
 	observeEvent(input[[trigger]],{
     		Database$background <- Database$background_cache
-		print(paste("primary search status: ", Database$primary_search_is_ongoing))
-		print(paste("GO search status: ", Search$is_ongoing))
-		print(paste("Primary search query: ", Database$primary_search_cache))
+		#print(paste("primary search status: ", Database$primary_search_is_ongoing))
+		#print(paste("GO search status: ", Search$is_ongoing))
+		#print(paste("Primary search query: ", Database$primary_search_cache))
     		if(Search$is_ongoing == FALSE && Database$primary_search_is_ongoing == FALSE){ #default conditions
 			print("case 1 triggered")
       			Database$background <- apply_demographic_filter(Database$background, demographics, target = "Age", value = input$age_filter, max_value = 11)

@@ -3,6 +3,7 @@ toggle_annotations <- function(input, trigger, Plot, Database){
 		#print("triggered the annotation toggle")
 		#print(head(Global$demographics))
     		Plot$is_annotated <- input$plot_labels
+		#print(paste("annotation status: ", input$plot_labels))
     		#if(Plot$is_annotated == "off"){
       			#Global$demographics <- NULL
     		#}
@@ -13,9 +14,14 @@ toggle_annotations <- function(input, trigger, Plot, Database){
 		if(!is.null(Database) && 
 		   !is.null(Database$current_entry)&&
 		   !is.null(Database$background)){
+			#print("remaking boxplot")
 			Plot$boxplot <- boxplot_driver(Database$background, 
 					       entry = Database$current_entry,
 					       flag = Plot$is_annotated)
+			#update the boxplot display
+			if(input$plot_type == "boxplot"){
+				Plot$current_plot <- Plot$boxplot
+			}
 		}
   	})
 }

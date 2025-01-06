@@ -32,6 +32,7 @@ ui <- dashboardPage(skin = "black",
                       actionButton("add_protein_button", "Add protein to cart"),
                       actionButton("export_go_data_button", "Export GO data to cart"),
                       actionButton("toggle_protein_cart", "Show protein shopping cart"),
+                      radioButtons("cart_type", "Show shopping cart as: ", choices = c("proteins", "go data")),
                       downloadButton("download", "Download Shopping Cart",
                                      style = "width: 100%; margin-top: 10px;")
                       
@@ -161,7 +162,6 @@ server <- function(input, output, session){
       ),
       
       actionButton("delete_selected", "Delete Selected Rows"),
-      radioButtons("cart_type", "Show shopping cart as: ", choices = c("proteins", "go data")),
       easyClose = TRUE,
       footer = modalButton("Close"),
       style = "width: 90%; max-width: 2000px;"

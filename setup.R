@@ -15,8 +15,8 @@ demographics <- read.csv("./data/demographics.csv")
 #loading functions
 print("loading setup functions")
 source('./functions/loading/generate_foreground.R')
-source('./functions/plot_junction.R')
-source('./functions/cart_junction.R')
+source('./functions/junctions/plot_junction.R')
+source('./functions/junctions/cart_junction.R')
 
 #mapping_functions
 print("loading mapping functions")
