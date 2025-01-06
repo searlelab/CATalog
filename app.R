@@ -33,7 +33,9 @@ ui <- dashboardPage(skin = "black",
                       actionButton("export_go_data_button", "Export GO data to cart"),
                       actionButton("toggle_protein_cart", "Show protein shopping cart"),
                       radioButtons("cart_type", "Show shopping cart as: ", choices = c("proteins", "go data")),
-                      downloadButton("download", "Download Shopping Cart",
+                      downloadButton("download_protein_button", "Download Protein Cart",
+                                     style = "width: 100%; margin-top: 10px;"),
+                      downloadButton("download_go_button", "Download GO Cart",
                                      style = "width: 100%; margin-top: 10px;")
                       
                     ),
@@ -41,11 +43,17 @@ ui <- dashboardPage(skin = "black",
                       tags$head(
                         tags$style(HTML(
                           "
-                          #download{
+                          #download_protein_button{
                             color: black !important;
                             background-color: #ffffff;
                             border: 1px solid #cccccc;
                             font-weight: bold;
+                          }
+                          #download_go_button{
+                          color: black !important;
+                          background-color: #ffffff;
+                            border: 1px solid #cccccc;
+                          font-weight: bold;
                           }
                           "
                         ))
@@ -179,9 +187,9 @@ server <- function(input, output, session){
     ))
   })
   
-  output$download <- downloadHandler(
+  output$download_protein_button <- downloadHandler(
     filename = function(){
-      paste("my_data-", Sys.Date(), ".csv", sep="")
+      paste("protein_data-", Sys.Date(), ".csv", sep="")
     },
     content = function(file){
       data <- ShoppingCart$data
@@ -189,7 +197,17 @@ server <- function(input, output, session){
     }
   )
   
-  
+  download_protein_handler(output, ShoppingCart)
+  download_go_handler(output, ShoppingCart)
+  #output$download_go_button <- downloadHandler(
+    #filename = function(){
+      #paste("go_data-", Sys.Date(), ".csv", sep="")
+    #},
+    #content = function(file){
+      #data <- ShoppingCart$go_data
+      #write.csv(data, file, row.names = FALSE)
+    #}
+  #)
 }
 
 shinyApp(ui, server)

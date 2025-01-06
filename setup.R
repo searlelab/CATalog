@@ -101,3 +101,8 @@ source('./components/event_handlers/add_go_info_to_shopping_cart_handler.R')
 print("loading error handlers")
 source('./components/error_handlers/invalid_demographic_value_error_handler.R')
 
+#download handlers
+print("loading download handlers")
+source('./components/download_handlers/download_protein_handler.R')
+source('./components/download_handlers/download_go_handler.R')
+
