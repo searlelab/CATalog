@@ -67,6 +67,7 @@ source('./functions/shopping_cart/add_row_to_cart.R')
 source('./functions/shopping_cart/create_empty_dataframe.R')
 source('./functions/shopping_cart/remove_row_from_cart.R')
 source('./functions/shopping_cart/get_selected_rows.R')
+source('./functions/shopping_cart/create_empty_go_dataframe.R')
 
 ##components
 

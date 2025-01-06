@@ -97,8 +97,18 @@ server <- function(input, output, session){
     #Database$foreground$check <- sprintf("<input type='checkbox' class='checkbox' id='checkbox_%s'>", core_database$Entry)
     Database$foreground_cache <- Database$foreground
     ShoppingCart$data <- create_empty_dataframe(Database$foreground)
+    ShoppingCart$go_data <- create_empty_go_dataframe()
     Global$demographics <- demographics
   })
+  
+  #observe({
+    #if (input$cart_type == "proteins") {
+      #ShoppingCart$current_frame <- ShoppingCart$protein_data
+    #} else if (input$cart_type == "go data") {
+      #ShoppingCart$current_frame <- ShoppingCart$go_data
+    #}
+    # Add other conditions for additional cart types if needed
+  #})
   
   #setting up the search parameters
   Search$cache <- NULL
@@ -144,16 +154,17 @@ server <- function(input, output, session){
   invalid_demographic_value_error_handler(input, button_id = "bsc_filter", min = 1, max = 8)
   
   #stuff involving the shopping cart
-  add_protein_to_shopping_cart_handler(input, "add_protein_button", ShoppingCart, Database$foreground)
-  add_go_info_to_shopping_cart_handler(input, "export_go_data_button", Database, ShoppingCart, go_data)
+  add_protein_to_shopping_cart_handler(input, "add_protein_button", ShoppingCart, Database$foreground, output)
+  add_go_info_to_shopping_cart_handler(input, "export_go_data_button", Database, ShoppingCart, go_data, output)
   remove_protein_from_shopping_cart_handler(input, "delete_selected", ShoppingCart)
   shopping_cart_row_click_handler(input, "protein_cart_main_display_rows_selected", ShoppingCart)
   
-  toggle_cart_type(input, "cart_type", ShoppingCart)
-  protein_cart_main_display_backend(output, ShoppingCart)
+  toggle_cart_type(input, "cart_type", session, ShoppingCart, output)
+  #protein_cart_main_display_backend(output, ShoppingCart)
   
   #logic for the modal portion of the cart main_display
   observeEvent(input$toggle_protein_cart,{ #modal main_display
+    protein_cart_main_display_backend(output, ShoppingCart)
     showModal(modalDialog(
       title = "Protein Cart",
       tags$div(
