@@ -129,7 +129,7 @@ server <- function(input, output, session){
   
   search_button_logic(input, session, trigger = "search_button", Database, Search)
   
-  reset_button_logic(input, session, trigger = "reset_button", Database, Search)
+  reset_button_logic(input, session, trigger = "reset_button", Database, Search, Global, demographics)
   
   filter_button_logic(input, trigger = "filter_button", Database, Search, Global, Plot, demographics, output,session)
   
