@@ -2,95 +2,104 @@ source('setup.R')
 
 core_database <- read.csv("./data/protein_database.csv")
 
-ui <- dashboardPage(skin = "black",
-                    dashboardHeader(title = tags$img(src='https://i.ibb.co/x6tH34j/logo4.png', height = '60', width = '120')),
-                    dashboardSidebar(
-                      useShinyjs(),
-                      textInput("go_search_query", "Search proteins by GO term: ", value = ""),
-                      textInput("protein_search_query", "Search protein by field", value = ""),
-                      radioButtons("search_field", "Search Field: ",
-                                   c("Protein name",
-                                     "Gene name",
-                                     "Entry")),
-                      actionButton("search_button", "Search"),
-                      actionButton("reset_button", "reset"),
-                      selectInput("sample_type", "Filter by highest biofluid:",
-                                  choices = c("all", "urine", "serum", "plasma")),
-                      numericInput("age_filter", "Maximum Age", value = 11),
-                      numericInput("bsc_filter", "Maximum BSC", value = 8),
-                      actionButton("filter_button", "Filter"),
-                      radioButtons("plot_labels", "Sample annotation: ",
-                                   c("off", "on")),
-                      radioButtons("go_data_type", "GO Data: ",
-                                   c("biological process",
-                                     "cellular compartment",
-                                     "molecular function"),
-                                   selected = "biological process"),
-                      radioButtons("plot_type", "Plot Type: ",
-                                   c("boxplot",
-                                     "scatterplot")),
-                      actionButton("add_protein_button", "Add protein to cart"),
-                      actionButton("export_go_data_button", "Export GO data to cart"),
-                      actionButton("toggle_protein_cart", "Show protein shopping cart"),
-                      radioButtons("cart_type", "Show shopping cart as: ", choices = c("proteins", "go data")),
-                      downloadButton("download_protein_button", "Download Protein Cart",
-                                     style = "width: 100%; margin-top: 10px;"),
-                      downloadButton("download_go_button", "Download GO Cart",
-                                     style = "width: 100%; margin-top: 10px;"),
-                      actionButton("upload_button", "Upload File"),
-                      tags$div(
-                      fileInput("file_upload", "Choose CSV File",
-                                accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv")),
-                                style = "display: none;",
-                      ),
-                      radioButtons("GO_search_type", "Search Type: ",
-                                   c("global", "local"))
-                      
-                    ),
-                    dashboardBody(
-                      tags$head(
-                        tags$style(HTML(
-                          "
-                          #download_protein_button{
-                            color: black !important;
-                            background-color: #ffffff;
-                            border: 1px solid #cccccc;
-                            font-weight: bold;
-                          }
-                          #download_go_button{
-                          color: black !important;
-                          background-color: #ffffff;
-                            border: 1px solid #cccccc;
-                          font-weight: bold;
-                          }
-                          "
-                        ))
-                      ),
-                      tags$script(HTML('
-    
-                        $(document).on("change", "input.checkbox", function() {
-                          var selected = [];
-                          $("input.checkbox:checked").each(function() {
-                            selected.push($(this).attr("id").replace("checkbox_", ""));
-                          });
-                          Shiny.setInputValue("checked_rows", selected);
-                        });
-                      ')),
-                      fluidRow(
-                        column(width = 8,
-                               box(width = NULL, DT::dataTableOutput("main_display"), 
-                                   style = "height:400px; overflow-y: scroll; overflow-x: scroll;"),
-                               box(width = NULL, DT::dataTableOutput("go_information"),
-                                   style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
-                        ),
-                        column(width = 4,
-                               box(width = NULL, plotOutput("show_plot", height = 300, width = 250)),
-                               box(width = NULL, div(tableOutput("demo"), style = "font-size:70%; overflow-y: scroll"),
-                                   style = "height: 100px")
-                        )
-                      )
-                    )
+ui <- dashboardPage(
+  skin = "black",
+  dashboardHeader(
+    title = tags$img(src = 'https://i.ibb.co/x6tH34j/logo4.png', height = '60', width = '120')
+  ),
+  dashboardSidebar(
+    useShinyjs(),
+    sidebarMenu(
+      menuItem("Search", icon = icon("search"),
+               textInput("go_search_query", "Search proteins by GO term:", value = ""),
+               textInput("protein_search_query", "Search protein by field", value = ""),
+               radioButtons("search_field", "Search Field:",
+                            choices = c("Protein name", "Gene name", "Entry")),
+               actionButton("search_button", "Search"),
+               actionButton("reset_button", "Reset")
+      ),
+      menuItem("Filters", icon = icon("filter"),
+               selectInput("sample_type", "Filter by highest biofluid:",
+                           choices = c("all", "urine", "serum", "plasma")),
+               numericInput("age_filter", "Maximum Age", value = 11),
+               numericInput("bsc_filter", "Maximum BSC", value = 8),
+               actionButton("filter_button", "Apply Filters")
+      ),
+      menuItem("Plots", icon = icon("chart-bar"),
+               radioButtons("plot_labels", "Sample annotation:",
+                            choices = c("off", "on")),
+               radioButtons("go_data_type", "GO Data:",
+                            choices = c("biological process", "cellular compartment", "molecular function"),
+                            selected = "biological process"),
+               radioButtons("plot_type", "Plot Type:",
+                            choices = c("boxplot", "scatterplot")),
+               actionButton("add_protein_button", "Add protein to cart"),
+               actionButton("export_go_data_button", "Export GO data to cart")
+      ),
+      menuItem("Downloads", icon = icon("download"),
+               div(
+                 actionButton("toggle_protein_cart", "Show protein shopping cart",
+                              style = "width: 70%; margin-bottom: 10px; font-size: 12px;"),
+                 radioButtons("cart_type", "Show shopping cart as:",
+                              choices = c("proteins", "go data"))
+               ),
+               div(
+                 downloadButton("download_protein_button", "Download Protein Cart",
+                                style = "width: 70%; margin-top: 10px; display: block;"),
+                 downloadButton("download_go_button", "Download GO Cart",
+                                style = "width: 70%; margin-top: 10px; display: block;")
+               ),
+               div(
+                 actionButton("upload_button", "Upload File",
+                              style = "width: 50%; margin-top: 10px;"),
+                 div(
+                   fileInput("file_upload", "Choose CSV File",
+                             accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv")),
+                   style = "display: none;"
+                 )
+               )
+      )
+    )
+  ),
+  dashboardBody(
+    tags$head(
+      tags$style(HTML("
+        #download_protein_button, #download_go_button {
+          color: black !important;
+          background-color: #ffffff;
+          border: 1px solid #cccccc;
+          font-weight: bold;
+          font-size: 12px;
+          padding: 5px 10px;
+        }
+      "))
+    ),
+    tags$script(HTML('
+      $(document).on("change", "input.checkbox", function() {
+        var selected = [];
+        $("input.checkbox:checked").each(function() {
+          selected.push($(this).attr("id").replace("checkbox_", ""));
+        });
+        Shiny.setInputValue("checked_rows", selected);
+      });
+    ')),
+    fluidRow(
+      column(width = 8,
+             box(width = NULL, DT::dataTableOutput("main_display"),
+                 style = "height:400px; overflow-y: scroll; overflow-x: scroll;"),
+             box(width = NULL, DT::dataTableOutput("go_information"),
+                 style = "height: 200px; overflow-y: scroll; overflow-x: scroll;")
+      ),
+      column(width = 4,
+             box(width = NULL, plotOutput("show_plot", height = 300, width = 250)),
+             box(width = NULL, div(tableOutput("demo"),
+                                   style = "font-size:70%; overflow-y: scroll"),
+                 style = "height: 100px")
+      )
+    )
+  )
 )
+
 
 server <- function(input, output, session){
   Database <- reactiveValues()
