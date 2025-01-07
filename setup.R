@@ -23,6 +23,7 @@ print("loading mapping functions")
 source('./functions/mapping/map_index_to_entry.R')
 source('./functions/mapping/map_target_to_index.R')
 source('./functions/mapping/map_index_to_name.R')
+source('./functions/mapping/map_index_to_gene.R')
 
 #boxplot functions
 print("loading boxplot functions")

@@ -36,7 +36,15 @@ ui <- dashboardPage(skin = "black",
                       downloadButton("download_protein_button", "Download Protein Cart",
                                      style = "width: 100%; margin-top: 10px;"),
                       downloadButton("download_go_button", "Download GO Cart",
-                                     style = "width: 100%; margin-top: 10px;")
+                                     style = "width: 100%; margin-top: 10px;"),
+                      actionButton("upload_button", "Upload File"),
+                      tags$div(
+                      fileInput("file_upload", "Choose CSV File",
+                                accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv")),
+                                style = "display: none;",
+                      ),
+                      radioButtons("GO_search_type", "Search Type: ",
+                                   c("global", "local"))
                       
                     ),
                     dashboardBody(
@@ -109,15 +117,6 @@ server <- function(input, output, session){
     Global$demographics <- demographics
   })
   
-  #observe({
-    #if (input$cart_type == "proteins") {
-      #ShoppingCart$current_frame <- ShoppingCart$protein_data
-    #} else if (input$cart_type == "go data") {
-      #ShoppingCart$current_frame <- ShoppingCart$go_data
-    #}
-    # Add other conditions for additional cart types if needed
-  #})
-  
   #setting up the search parameters
   Search$cache <- NULL
   Search$is_ongoing <- FALSE
@@ -187,27 +186,24 @@ server <- function(input, output, session){
     ))
   })
   
-  output$download_protein_button <- downloadHandler(
-    filename = function(){
-      paste("protein_data-", Sys.Date(), ".csv", sep="")
-    },
-    content = function(file){
-      data <- ShoppingCart$data
-      write.csv(data, file, row.names = FALSE)
-    }
-  )
-  
   download_protein_handler(output, ShoppingCart)
   download_go_handler(output, ShoppingCart)
-  #output$download_go_button <- downloadHandler(
-    #filename = function(){
-      #paste("go_data-", Sys.Date(), ".csv", sep="")
-    #},
-    #content = function(file){
-      #data <- ShoppingCart$go_data
-      #write.csv(data, file, row.names = FALSE)
-    #}
-  #)
+  
+  observeEvent(input$upload_button, {
+    shinyjs::runjs('$("#file_upload").click();') # Simulate click on fileInput
+  })
+  
+  observeEvent(input$file_upload, {
+    req(input$file_upload) # Ensure a file is selected
+    file_path <- input$file_upload$datapath
+    
+    # Read the file and update Database$foreground
+    Database$foreground <- read.csv(file_path, stringsAsFactors = FALSE)
+    
+    # Print confirmation
+    showNotification("Database$foreground has been updated.", type = "message")
+  })
+  
 }
 
 shinyApp(ui, server)
