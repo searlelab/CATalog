@@ -99,7 +99,7 @@ ui <- dashboardPage(
              box(width = NULL, plotOutput("show_plot", height = 300, width = 250)),
              box(width = NULL, div(tableOutput("demo"),
                                    style = "font-size:70%; overflow-y: scroll"),
-                 style = "height: 100px")
+                 style = "height: 150px")
       )
     )
   )
