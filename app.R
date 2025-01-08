@@ -9,14 +9,15 @@ ui <- dashboardPage(
   ),
   dashboardSidebar(
     useShinyjs(),
+    actionButton("reset_button", "Reset"),
     sidebarMenu(
       menuItem("Search", icon = icon("search"),
                textInput("go_search_query", "Search proteins by GO term:", value = ""),
                textInput("protein_search_query", "Search protein by field", value = ""),
                radioButtons("search_field", "Search Field:",
                             choices = c("Protein name", "Gene name", "Entry")),
-               actionButton("search_button", "Search"),
-               actionButton("reset_button", "Reset")
+               actionButton("search_button", "Search")
+               #actionButton("reset_button", "Reset")
       ),
       menuItem("Filters", icon = icon("filter"),
                selectInput("sample_type", "Filter by highest biofluid:",
@@ -28,16 +29,20 @@ ui <- dashboardPage(
       menuItem("Plots", icon = icon("chart-bar"),
                radioButtons("plot_labels", "Sample annotation:",
                             choices = c("off", "on")),
+               
+               radioButtons("plot_type", "Plot Type:",
+                            choices = c("boxplot", "scatterplot"))
+               
+      ),
+      menuItem("GeneOntology", icon = icon("book"),
                radioButtons("go_data_type", "GO Data:",
                             choices = c("biological process", "cellular compartment", "molecular function"),
-                            selected = "biological process"),
-               radioButtons("plot_type", "Plot Type:",
-                            choices = c("boxplot", "scatterplot")),
-               actionButton("add_protein_button", "Add protein to cart"),
-               actionButton("export_go_data_button", "Export GO data to cart")
+                            selected = "biological process")
       ),
-      menuItem("Downloads", icon = icon("download"),
+      menuItem("ShoppingCart", icon = icon("download"),
                div(
+                 actionButton("add_protein_button", "Add protein to cart"),
+                 actionButton("export_go_data_button", "Export GO data to cart"),
                  actionButton("toggle_protein_cart", "Show protein shopping cart",
                               style = "width: 70%; margin-bottom: 10px; font-size: 12px;"),
                  radioButtons("cart_type", "Show shopping cart as:",
