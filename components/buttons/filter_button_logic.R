@@ -21,11 +21,20 @@ filter_button_logic <- function(input, trigger, Database, Search, Global, Plot, 
       			Database$foreground <- filter_foreground(Database$foreground, target = input$sample_type)
 			Global$demographics <- update_demographics(Database$background, demographics)
     		}
-		if(!is.null(input$main_display_rows_selected)){
-			Plot$boxplot <- boxplot_driver(data = Database$background,
+					
+		Plot$boxplot <- boxplot_driver(data = Database$background,
 						entry = Database$current_entry,
 						flag = Plot$is_annotated)
+		Plot$scatterplot <- scatterplot_driver(Database, Global)
+
+		if(input$plot_type == "boxplot"){
+			Plot$current_plot <- Plot$boxplot
 		}
+		else if(input$plot_type == "scatterplot"){
+			Plot$current_plot <- Plot$scatterplot
+		}
+
+
 
   	})
 }
