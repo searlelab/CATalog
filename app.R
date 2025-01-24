@@ -46,7 +46,7 @@ ui <- dashboardPage(
                  actionButton("toggle_protein_cart", "Show shopping cart",
                               style = "width: 70%; margin-bottom: 10px; font-size: 12px;"),
                  radioButtons("cart_type", "Show shopping cart as:",
-                              choices = c("proteins", "go data"))
+                              choices = c("Proteins", "Go Data"))
                ),
                div(
                  downloadButton("download_protein_button", "Download Protein Data",
@@ -55,7 +55,7 @@ ui <- dashboardPage(
                                 style = "width: 70%; margin-top: 10px; display: block;")
                ),
                div(
-                 actionButton("upload_button", "Upload File",
+                 actionButton("upload_button", "Upload Protein Data",
                               style = "width: 50%; margin-top: 10px;"),
                  div(
                    fileInput("file_upload", "Choose CSV File",
