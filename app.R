@@ -49,9 +49,9 @@ ui <- dashboardPage(
                               choices = c("proteins", "go data"))
                ),
                div(
-                 downloadButton("download_protein_button", "Download Shopping Cart",
+                 downloadButton("download_protein_button", "Download Protein Data",
                                 style = "width: 70%; margin-top: 10px; display: block;"),
-                 downloadButton("download_go_button", "Download GO Cart",
+                 downloadButton("download_go_button", "Download GO Data",
                                 style = "width: 70%; margin-top: 10px; display: block;")
                ),
                div(
