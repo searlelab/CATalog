@@ -14,7 +14,7 @@ add_go_info_to_shopping_cart_handler <- function(input, trigger, Database, Shopp
       shinyalert(paste("Exported GO data from: ", Database$current_entry))
 
       # Update current_frame to reflect the "go data" if needed
-      if(input$cart_type == "go data") {
+      if(input$cart_type == "Go Data") {
         ShoppingCart$current_frame <- ShoppingCart$go_data #set the GO data as the current display
       	print("re-rendering the GO frame")
       }

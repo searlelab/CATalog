@@ -9,7 +9,7 @@ add_protein_to_shopping_cart_handler <- function(input, button_id, ShoppingCart,
       shinyalert(paste("Added selected proteins to cart"))
 
       # Update the current table if the cart type is "proteins"
-      if(input$cart_type == "proteins") {
+      if(input$cart_type == "Proteins") {
         ShoppingCart$current_frame <- ShoppingCart$data
       }      
     } else {
