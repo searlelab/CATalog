@@ -34,22 +34,22 @@ ui <- dashboardPage(
                             choices = c("boxplot", "scatterplot"))
                
       ),
-      menuItem("GeneOntology", icon = icon("book"),
+      menuItem("Gene Ontology", icon = icon("book"),
                radioButtons("go_data_type", "GO Data:",
                             choices = c("biological process", "cellular compartment", "molecular function"),
                             selected = "biological process")
       ),
-      menuItem("ShoppingCart", icon = icon("download"),
+      menuItem("Shopping Cart", icon = icon("download"),
                div(
                  actionButton("add_protein_button", "Add protein to cart"),
-                 actionButton("export_go_data_button", "Export GO data to cart"),
-                 actionButton("toggle_protein_cart", "Show protein shopping cart",
+                 actionButton("export_go_data_button", "Add GO data to cart"),
+                 actionButton("toggle_protein_cart", "Show shopping cart",
                               style = "width: 70%; margin-bottom: 10px; font-size: 12px;"),
                  radioButtons("cart_type", "Show shopping cart as:",
                               choices = c("proteins", "go data"))
                ),
                div(
-                 downloadButton("download_protein_button", "Download Protein Cart",
+                 downloadButton("download_protein_button", "Download Shopping Cart",
                                 style = "width: 70%; margin-top: 10px; display: block;"),
                  downloadButton("download_go_button", "Download GO Cart",
                                 style = "width: 70%; margin-top: 10px; display: block;")
