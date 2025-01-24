@@ -55,7 +55,7 @@ ui <- dashboardPage(
                                 style = "width: 70%; margin-top: 10px; display: block;")
                ),
                div(
-                 actionButton("upload_button", "Upload Protein Data",
+                 actionButton("upload_button", "Upload Proteins",
                               style = "width: 50%; margin-top: 10px;"),
                  div(
                    fileInput("file_upload", "Choose CSV File",
