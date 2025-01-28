@@ -27,7 +27,7 @@ ui <- dashboardPage(
                actionButton("filter_button", "Apply Filters")
       ),
       menuItem("Plots", icon = icon("chart-bar"),
-               radioButtons("show_annotations", "Sample annotation:",
+               radioButtons("show_annotations", "Sample Annotation:",
                             choices = c("off", "on")),
                
                radioButtons("swap_plot_type", "Plot Type:",

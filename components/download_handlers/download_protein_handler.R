@@ -4,7 +4,7 @@ download_protein_handler <- function(output, ShoppingCart){
       		paste("protein_data-", Sys.Date(), ".csv", sep="")
     	},
     	content = function(file){
-      		data <- ShoppingCart$data
+      		data <- ShoppingCart$protein_data
       		write.csv(data, file, row.names = FALSE)
     	}
   )
