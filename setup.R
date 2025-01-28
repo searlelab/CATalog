@@ -53,7 +53,7 @@ source('./functions/search/search_for_protein.R')
 
 #filtering functions
 print("loading filter functions")
-source('./functions/filters/apply_demographic_filter.R')
+#source('./functions/filters/apply_demographic_filter.R')
 source('./functions/filters/filter_background_by_demographics.R')
 source('./functions/filters/filter_background_by_cache.R')
 source('./functions/filters/filter_foreground_by_highest_biofluid.R')

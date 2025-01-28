@@ -23,6 +23,7 @@ ui <- dashboardPage(
                            choices = c("All", "Urine", "Serum", "Plasma")),
                numericInput("age_filter", "Maximum Age", value = 11),
                numericInput("bsc_filter", "Maximum BSC", value = 8),
+               radioButtons("sex_filter", "Sex: ", choices = c("Both", "Female Spayed", "Male Neutered")),
                actionButton("filter_button", "Apply Filters")
       ),
       menuItem("Plots", icon = icon("chart-bar"),
@@ -46,8 +47,7 @@ ui <- dashboardPage(
                               style = "width: 70%; margin-bottom: 10px; font-size: 12px;"),
                  actionButton("show_go_cart", "Show GO cart",
                               style = "width: 70%; margin-bottom: 10px; font-size: 12px;"),
-                 #radioButtons("cart_type", "Show shopping cart as:",
-                            #  choices = c("Proteins", "Go Data"))
+
                ),
                div(
                  downloadButton("download_protein_button", "Download Protein Data",

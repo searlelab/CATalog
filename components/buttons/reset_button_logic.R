@@ -10,13 +10,13 @@ reset_button_logic <- function(input, session, Database, Search, demographics, P
     			      Search$is_ongoing <- FALSE
 			      PlotManager$boxplot <- boxplot_driver(data = Database$background,
 						entry = Database$current_entry,
-						flag = Plot$is_annotated)
+						flag = PlotManager$is_annotated)
 			      PlotManager$scatterplot <- scatterplot_driver(Database)
 
-			      if(input$plot_type == "boxplot"){
-					PlotManager$current_plot <- Plot$boxplot
+			      if(input$switch_plot_type == "Boxplot"){
+					PlotManager$current_plot <- PlotManager$boxplot
 			      }
-			      else if(input$plot_type == "scatterplot"){
+			      else if(input$switch_plot_type == "Scatterplot"){
 					PlotManager$current_plot <- PlotManager$scatterplot
 			      }
 
