@@ -5,7 +5,7 @@ apply_demographic_filter <- function(background, demographics, target, value, ma
 		  #print("conditions met, executing filter")
 		  if(value > 0 && value <= max_value){
 			#print("conditions met, applying filter")
-		  	background <- filter_background(background, demographics, target, value)
+		  	background <- filter_background_by_demographics(background, demographics, target, value)
 		  }
 		  
 	}

@@ -1,4 +1,4 @@
-format_data <- function(data, entry){
+format_boxplot_data <- function(data, entry){
 	r <- data%>%
 		filter(Entry == entry)
 	name <- r[,2]
@@ -6,16 +6,15 @@ format_data <- function(data, entry){
 	values <- as.numeric(x)
 	labels <- colnames(x)
 
-	urine <- replicate((ncol(x)/3), "urine")
-	plasma<- replicate((ncol(x)/3), "plasma")
-	serum <- replicate((ncol(x)/3), "serum")
+	urine <- replicate((ncol(x)/3), "Urine")
+	plasma<- replicate((ncol(x)/3), "Plasma")
+	serum <- replicate((ncol(x)/3), "Serum")
 
 	biofluid <- c(urine, plasma, serum)
 
 	df <- data.frame(values, biofluid, labels)
 
 	output <- list(name, df)
-	print("data formatted sucessfully")
 	output
 }
 

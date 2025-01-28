@@ -1,11 +1,11 @@
 set_ontology <- function(go_list, field){
-	if(field == "biological process"){ #default
+	if(field == "Biological Process"){ #default
 		output <- go_list[[1]]
 	}
-	if(field == "cellular compartment"){
+	if(field == "Cellular Compartment"){
 		output <- go_list[[2]]
 	}
-	if(field == "molecular function"){
+	if(field == "Molecular Function"){
 		output <- go_list[[3]]
 	}
 	output

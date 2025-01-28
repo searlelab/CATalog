@@ -1,37 +1,37 @@
-filter_button_logic <- function(input, trigger, Database, Search, Global, Plot, demographics, output, session){
-	observeEvent(input[[trigger]],{
+filter_button_logic <- function(input, Database, Search, PlotManager, demographics, output, session){
+	observeEvent(input$filter_button,{
+		req(input$main_display_rows_selected)
     		Database$background <- Database$background_cache
-		#print(paste("primary search status: ", Database$primary_search_is_ongoing))
-		#print(paste("GO search status: ", Search$is_ongoing))
-		#print(paste("Primary search query: ", Database$primary_search_cache))
-    		if(Search$is_ongoing == FALSE && Database$primary_search_is_ongoing == FALSE){ #default conditions
-			print("case 1 triggered")
+    		if(Search$ongoing == FALSE){ #default conditions
       			Database$background <- apply_demographic_filter(Database$background, demographics, target = "Age", value = input$age_filter, max_value = 11)
 			Database$background <- apply_demographic_filter(Database$background, demographics, target = "BSC", value = input$bsc_filter, max_value = 8)
       			Database$foreground <- generate_foreground(Database$background)
-      			Database$foreground <- filter_foreground(Database$foreground, target = input$sample_type)
-			Global$demographics <- update_demographics(Database$background, demographics)
+      			Database$foreground <- filter_foreground_by_highest_biofluid(Database$foreground, biofluid = input$biofluid_type)
+			Database$demographics <- update_demographics(Database$background, demographics)
     		}
-    		else if(Search$is_ongoing == TRUE){ #caches so the table isn't reset upon searching the GO database
-			print("case 2 triggered")
+    		else if(Search$ongoing == TRUE){ #caches so the table isn't reset upon searching the GO database
       			Database$background <- filter_background_by_cache(Database$background, Search$cache)
       			Database$background <- apply_demographic_filter(Database$background, demographics, target = "Age", value = input$age_filter, max_value = 11)
 			Database$background <- apply_demographic_filter(Database$background, demographics, target = "BSC", value = input$bsc_filter, max_value = 8)
       			Database$foreground <- generate_foreground(Database$background)
-      			Database$foreground <- filter_foreground(Database$foreground, target = input$sample_type)
-			Global$demographics <- update_demographics(Database$background, demographics)
+      			Database$foreground <- filter_foreground_by_highest_biofluid(Database$foreground, biofluid = input$biofluid_type)
+			Database$demographics <- update_demographics(Database$background, demographics)
     		}
+		print("applied filters")
 					
-		Plot$boxplot <- boxplot_driver(data = Database$background,
+		PlotManager$boxplot <- boxplot_driver(data = Database$background,
 						entry = Database$current_entry,
-						flag = Plot$is_annotated)
-		Plot$scatterplot <- scatterplot_driver(Database, Global)
+						flag = PlotManager$is_annotated)
+		print("set boxplot")
+		PlotManager$scatterplot <- scatterplot_driver(Database)
 
-		if(input$plot_type == "boxplot"){
-			Plot$current_plot <- Plot$boxplot
+		print("set plots")
+
+		if(input$swap_plot_type == "Boxplot"){
+			PlotManager$current_plot <- PlotManager$boxplot
 		}
-		else if(input$plot_type == "scatterplot"){
-			Plot$current_plot <- Plot$scatterplot
+		else if(input$swap_plot_type == "Scatterplot"){
+			PlotManager$current_plot <- PlotManager$scatterplot
 		}
 
 

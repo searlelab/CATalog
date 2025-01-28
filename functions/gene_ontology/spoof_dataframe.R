@@ -7,7 +7,7 @@ spoof_dataframe <- function(protein){
 	dummy <- c(protein, "", "", "", "", "", "")
 	df <- rbind(df, dummy)
 	df <- df[-1,]
-	df
+	return(df)
 }
 
 

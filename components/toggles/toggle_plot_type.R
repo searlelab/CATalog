@@ -1,5 +1,11 @@
-toggle_plot_type <- function(input, trigger, Plot){
-	observeEvent(input[[trigger]],{
-			     Plot$current_plot <- plot_junction(Plot, plot_type = input$plot_type)
+toggle_plot_type <- function(input, PlotManager){
+	observeEvent(input$swap_plot_type,{
+			     if(input$swap_plot_type == "Boxplot"){
+				     PlotManager$current_plot <- PlotManager$boxplot
+			     }
+			     if(input$swap_plot_type == "Scatterplot"){
+				     PlotManager$current_plot <- PlotManager$scatterplot
+			     }
+
 	})
 }

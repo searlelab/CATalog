@@ -17,7 +17,7 @@ generate_foreground <- function(data){
 		row_to_add <- data.frame(Gene, Protein, Entry, Urine, Plasma, Serum)
 		df <- rbind(df, row_to_add)
 	}
-	df
+	return(df)
 }
 
 

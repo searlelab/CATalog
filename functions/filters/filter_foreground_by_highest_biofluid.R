@@ -1,13 +1,10 @@
-filter_foreground <- function(data, target){
-	if(target == "all"){
-		print("returning all data")
+filter_foreground_by_highest_biofluid <- function(data, biofluid){
+	if(biofluid == "all"){
 		df = data
 	}
 	else{
 		#mapping the target to an index
-		print("filtering based on condition")
-		index <- map_target_to_index(target)
-		#print(index)
+		col_index <- map_biofluid_to_column_index(biofluid)
 		#generate an empty foreground dataframe
 		mat = matrix(ncol = 6, nrow = 0)
 		df = data.frame(mat)
@@ -18,15 +15,13 @@ filter_foreground <- function(data, target){
 		for(row in 1:nrow(data)){
 			r <- data[row,]
 			max_value <- max(as.numeric(as.vector(r[,4:6])))
-			target_value <- r[,index]
+			target_value <- r[,col_index]
 			delta <- abs(max_value - target_value)
-			#print(delta)
 			if(delta <= 1){
 				df <- rbind(df, r)
 			}
 		}
 	}
-	#print(nrow(df))
 	df
 }
 

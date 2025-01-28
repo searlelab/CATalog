@@ -1,7 +1,7 @@
-protein_cart_main_display_backend <- function(output, ShoppingCart){
-	output$protein_cart_main_display <- DT::renderDataTable({
-		req(ShoppingCart$current_frame)
-    		datatable(ShoppingCart$current_frame,
+shopping_cart_display_backend <- function(output, ShoppingCart){
+	output$shopping_cart_display <- DT::renderDataTable({
+		req(ShoppingCart$current_table)
+    		datatable(ShoppingCart$current_table,
               		selection = "single",
               		options = list(
                 	scrollX = TRUE,

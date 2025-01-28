@@ -1,5 +1,5 @@
-search_button_logic <- function(input, session, trigger, Database, Search){
-	observeEvent(input[[trigger]],{
+search_button_logic <- function(input, session, Database, Search){
+	observeEvent(input$search_button,{
 			     if(input$go_search_query != ""){
 			     	updateTextInput(session,"protein_search_query", value="")
 			     	Database$foreground <- Database$foreground_cache
