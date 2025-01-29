@@ -101,6 +101,7 @@ source('./components/event_handlers/main_display_row_click_handler.R')
 #error handlers
 print("loading error handlers")
 source('./components/error_handlers/invalid_demographic_value_error_handler.R')
+source('./components/error_handlers/invalid_delta_threshold_error_handler.R')
 
 #download handlers
 print("loading download handlers")

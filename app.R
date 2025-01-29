@@ -21,6 +21,7 @@ ui <- dashboardPage(
       menuItem("Filters", icon = icon("filter"),
                selectInput("biofluid_type", "Filter by highest biofluid:",
                            choices = c("All", "Urine", "Serum", "Plasma")),
+               numericInput("delta_threshold", "Delta Threshold", value = 1),
                numericInput("age_filter", "Maximum Age", value = 11),
                numericInput("bsc_filter", "Maximum BSC", value = 8),
                radioButtons("sex_filter", "Sex: ", choices = c("Both", "Female Spayed", "Male Neutered")),
@@ -141,8 +142,9 @@ server <- function(input, output, session){
   toggle_annotations(input, PlotManager, Database)
   
   #error handlers
-  invalid_demographic_value_error_handler(input, button_id = "age_filter", min = 1, max = 11)
-  invalid_demographic_value_error_handler(input, button_id = "bsc_filter", min = 1, max = 8)
+  invalid_delta_threshold_error_handler(input, session)
+  invalid_demographic_value_error_handler(input, session, button_id = "age_filter", min = 1, max = 11)
+  invalid_demographic_value_error_handler(input, session, button_id = "bsc_filter", min = 1, max = 8)
   
   #main display
   render_main_display_table(output, table_id = "main_display", Database)

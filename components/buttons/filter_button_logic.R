@@ -8,10 +8,10 @@ filter_button_logic <- function(input, Database, Search, PlotManager, demographi
 			Database$background <- filter_background_by_cache(Database$background, Search$cache)
 		}
 
-  		if(input$age_filter > 0 && input$age_filter <= 11){
+  		if(input$age_filter > 0 && input$age_filter < 11){
       			Database$background <- filter_background_by_demographics(Database$background, demographics, demographic_field = "Age", value = input$age_filter)
 		}
-		if(input$bsc_filter > 0 && input$bsc_filter <= 8){
+		if(input$bsc_filter > 0 && input$bsc_filter < 8){
 			print("filtering by BSC")
 			print(paste("the value is: ", input$bsc_filter))
 			Database$background <- filter_background_by_demographics(Database$background, demographics, demographic_field = "BSC", value = input$bsc_filter)
@@ -25,8 +25,8 @@ filter_button_logic <- function(input, Database, Search, PlotManager, demographi
 		}
 
       		Database$foreground <- generate_foreground(Database$background)
-		if(input$biofluid_type != "All"){
-      			Database$foreground <- filter_foreground_by_highest_biofluid(Database$foreground, biofluid = input$biofluid_type)
+		if(input$biofluid_type != "All" && input$delta_threshold > 0){
+      			Database$foreground <- filter_foreground_by_highest_biofluid(Database$foreground, biofluid = input$biofluid_type, delta_threshold = input$delta_threshold)
 			print("applied the foreground filter")
 		}
 		
