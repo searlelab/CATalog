@@ -5,7 +5,7 @@ account: alexwilliamjoyce
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 13389375
-bundleId: 9695534
+bundleId: 9723443
 url: https://alexwilliamjoyce.shinyapps.io/CATalog_test_build/
 version: 1
 asMultiple: FALSE
