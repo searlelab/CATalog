@@ -10,6 +10,7 @@ reset_button_logic <- function(input, session, Database, Search, demographics, P
    			      updateNumericInput(session, "bsc_filter", value = 8)
 			      updateRadioButtons(session, "sex_filter", selected = "Both")
     			      Search$ongoing <- FALSE
+			      req(input$main_display_rows_selected)
 			      PlotManager$boxplot <- boxplot_driver(data = Database$background,
 						entry = Database$current_entry,
 						flag = PlotManager$is_annotated)
