@@ -7,7 +7,7 @@ make_scatterplot <- function(data_list, name){
   			geom_line() + 
   			geom_point() +  # Add points to the line plot
 			scale_color_manual(values = biofluid_colors)+
-  			labs(x = "Age", y = "Value", color = "Biofluid") + 
+  			labs(x = "Age", y = "Relative Abundance", color = "Biofluid") + 
   			ggtitle(name) +
   			theme_minimal()
 	return(plot)

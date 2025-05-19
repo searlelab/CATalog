@@ -13,8 +13,8 @@ filter_button_logic <- function(input, Database, Search, PlotManager, demographi
   		if(input$age_filter > 0 && input$age_filter < 11){
       			Database$background <- filter_background_by_demographics(Database$background, demographics, demographic_field = "Age", value = input$age_filter)
 		}
-		if(input$bsc_filter > 0 && input$bsc_filter < 8){
-			Database$background <- filter_background_by_demographics(Database$background, demographics, demographic_field = "BSC", value = input$bsc_filter)
+		if(input$bcs_filter > 0 && input$bcs_filter < 8){
+			Database$background <- filter_background_by_demographics(Database$background, demographics, demographic_field = "BCS", value = input$bcs_filter)
 		}
 		if(input$sex_filter != "Both"){
 			Database$background <- filter_background_by_demographics(Database$background, demographics, demographic_field = "Sex", value = input$sex_filter)

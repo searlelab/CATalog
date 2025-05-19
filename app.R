@@ -23,7 +23,7 @@ ui <- dashboardPage(
                            choices = c("All", "Urine", "Serum", "Plasma")),
                numericInput("delta_threshold", "Delta Threshold", value = 1),
                numericInput("age_filter", "Maximum Age", value = 11),
-               numericInput("bsc_filter", "Maximum BSC", value = 8),
+               numericInput("bcs_filter", "Maximum BCS", value = 8),
                radioButtons("sex_filter", "Sex: ", choices = c("Both", "Female Spayed", "Male Neutered")),
                actionButton("filter_button", "Apply Filters")
       ),
