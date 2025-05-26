@@ -10,7 +10,7 @@ make_boxplot <- function(df, name, flag){
 		      legend.text=element_text(size = 12))+
 		scale_fill_manual(values = c('#D55382', '#003F5C', '#FFA600'))+
 		#geom_jitter(color = "black", position = position_jitter(seed = 1, width = 0.2))+
-		ylab("relative intensity")+
+		ylab("Relative Abundance")+
 		ggtitle(name)
 	if(flag == "off"){
 		plot_unannotated <- plot + geom_jitter(color = "black", position = position_jitter(seed = 1, width = 0.2))
